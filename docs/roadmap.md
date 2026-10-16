@@ -18,7 +18,7 @@ npm ecosystem first. Linux and macOS for v1.
 
 | Phase | Deliverable | Exit gate | Current state |
 | --- | --- | --- | --- |
-| 0 — Baseline | Repo skeleton, ADR-001…005, CI (rustfmt, clippy, deny, test), docs set | Docs pinned to a dated baseline; `cargo build` and CI green | Complete locally: docs dated, `make ci` green on 16 October. The hosted CI run is not yet observed (no Git remote) |
+| 0 — Baseline | Repo skeleton, ADR-001…005, CI (rustfmt, clippy, deny, test), docs set | Docs pinned to a dated baseline; `cargo build` and CI green | **Complete, 16 October.** Docs dated; `make ci` green locally; hosted run [38869463032](https://github.com/vyusec/zoli/actions/runs/38869463032) green on `3bbfe88` |
 | 1 — Decision core | `zoli check`, verified feed client, Rust conformance suite | Verdicts byte-identical to Go (ADR-004 gate 1–3); tamper, rollback, stale and withdraw fixtures handled; live agreement (gate 4) | Not started. Needs the fixture generator in intel-feed. Gate 4 needs a public HTTPS staging feed |
 | 2 — npm guard | `zoli serve`, npm-family shims, minimum age, block UX, `zoli doctor` | Real `npm install` (direct and transitive) blocked in Docker against a mock registry; `zoli doctor` passes; package-manager output unaffected | Not started |
 | 3 — Python guard | pip, uv, poetry and pipx via CA injection (`PIP_CERT`, `SSL_CERT_FILE` for uv, `pip.conf` merge) | Same Docker gate with real pip and a relisted fixture | Not started. Needs a PEP 440 port (ADR-004 §6) |
@@ -56,7 +56,7 @@ Each was found by reading the intel-feed Go source at the baseline, which is ide
 - **PC-2: live gate target.** `client-check` cannot reach a locally deployed feed: Go `netfetch` allows only port 443 on public addresses. The live gate needs a public HTTPS staging feed (ADR-004).
 - **PC-3: generator location.** The generator must live inside the intel-feed module, because `feed.Sign`, `RecordsHash`, `ApplyDelta` and `api.Query` are `internal/`.
 - **PC-4: policy coverage.** The v1 policy defaults did not cover `insufficient_information`. A full table is in [configuration](configuration.md#policy-defaults-v1), with OQ-1 and OQ-3 open.
-- **PC-5: CI evidence.** "CI green" cannot be observed without a Git remote. The local equivalent (`make ci`, same steps) is recorded; the hosted run stays pending.
+- **PC-5: CI evidence.** "CI green" could not be observed without a Git remote. Resolved on 16 October: the repository was pushed to `vyusec/zoli`, and run 38869463032 passed.
 - **PC-6: npm-family coverage.** The Phase 2 gate covers npm only. pnpm, npx and Yarn need their own evidence before Zoli claims to protect them.
 - **PC-7: path collision.** The Python prototype also uses `~/.zoli/config.json` and `~/.zoli/audit.jsonl`. v1 adds `config_version` and moves the audit log to `log/`.
 

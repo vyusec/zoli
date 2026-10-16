@@ -8,7 +8,7 @@ An install-time package firewall. Zoli wraps `npm` and related package managers,
 
 ## Status
 
-**Phase 0, baseline (16 October 2026).** The command surface, crate layout, CI definition and design documents exist. Nothing intercepts installs yet: every command exits with code 3 and does nothing. See [progress](docs/progress.md) for what is implemented versus validated.
+**Phase 0 complete (16 October 2026).** The command surface, crate layout, CI (green) and design documents exist. Nothing intercepts installs yet: every command exits with code 3 and does nothing. See [progress](docs/progress.md) for what is implemented versus validated.
 
 ## How it works
 
