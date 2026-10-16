@@ -1,0 +1,11 @@
+[package]
+name = "zoli-intel"
+description = "Verified Zoli intel-feed client: a faithful port of the Go reference client"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

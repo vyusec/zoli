@@ -1,0 +1,23 @@
+[package]
+name = "zoli-cli"
+description = "The zoli binary: install-time package firewall"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "zoli"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+zoli-intel.workspace = true
+zoli-policy.workspace = true
+zoli-proxy.workspace = true
+zoli-pms.workspace = true
+zoli-shell.workspace = true
+
+[lints]
+workspace = true

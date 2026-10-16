@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_DENY_VERSION: 0.20.2
+jobs:
+  lint:
+    name: rustfmt + clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      # Installs the toolchain pinned in rust-toolchain.toml.
+      - run: rustup toolchain install
+      - run: make fmt-check clippy
+  deny:
+    name: cargo-deny
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install
+      - run: cargo install --locked "cargo-deny@${CARGO_DENY_VERSION}"
+      - run: make deny
+  test:
+    name: test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # Phase 4 widens this to x86_64-linux, x86_64-mac and aarch64-mac release targets.
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install
+      - run: make build test

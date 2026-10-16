@@ -1,0 +1,32 @@
+# cargo-deny 0.20 configuration. Run with `make deny`.
+
+[graph]
+# v1 ships for Linux and macOS only (ADR-001).
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "x86_64-unknown-linux-musl",
+    "aarch64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+]
+all-features = true
+
+[advisories]
+yanked = "deny"
+ignore = []
+
+[licenses]
+# Extend only when a new dependency needs it, and say which in the commit.
+allow = ["Apache-2.0", "MIT", "Unicode-3.0"]
+confidence-threshold = 0.93
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
