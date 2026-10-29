@@ -1,6 +1,6 @@
 # ADR-005: Trust bootstrap
 
-- Status: Accepted, 16 October 2026. Items marked *(proposed)* need confirmation at the Phase 1 review; items marked *(verify in Phase 2)* need gate evidence before Zoli relies on them.
+- Status: Accepted 16 October; feed state/storage implementation updated 18 October 2026. Proxy CA proposals marked *(verify in Phase 2)* still need evidence before Zoli relies on them.
 
 ## Context
 
@@ -18,9 +18,11 @@ Zoli's guarantees rest on three anchors: the pinned feed key, the Zoli binary, a
 
 ### Rollback and missing state
 
-- **High-water mark** *(proposed)*. The highest verified sequence is stored separately from the cache, in `~/.zoli/state.json`. Deleting or corrupting the cache does not reset rollback protection.
+- **High-water mark** (implemented 18 October). The highest verified sequence, pinned key ID and raw-manifest digest live separately in `~/.zoli/state.json`. Missing/corrupt cache does not reset protection; corrupt/missing state beside a cache requires explicit recovery. Updates use an exclusive filesystem lock and commit durable state before durable cache replacement. Interrupted pairs fail closed and a verified update can repair them. Shared locks protect readers.
 - **Equivocation.** The same sequence with different manifest bytes is recorded as a security event, and the update fails. Go keeps the previous snapshot silently, so verdicts are identical and only Zoli's audit trail differs.
 - **No verified cache** (first run, failed load). No verdict is possible. `zoli check` reports "no verified feed", and policy blocks with an instruction to run `zoli update`. This state is never reported as `no_known_match`.
+
+Feed networking remains public HTTPS port 443 only. Registry private-network/custom-port access is a separate, explicit per-origin operator permission; it cannot relax feed transport or replace the pinned key. Runtime trust failures are audited when the log is writable, and remain visible nonzero errors when auditing is unavailable.
 
 ### Proxy CA
 

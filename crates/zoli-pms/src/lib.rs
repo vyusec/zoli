@@ -6,6 +6,9 @@
 //! direct install arguments out for the pre-flight check. Phase 0 only
 //! identifies programs; each adapter's behaviour is verified in Phase 2.
 
+pub mod inventory;
+pub mod requirements;
+
 /// How much Zoli promises for a package manager.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Support {

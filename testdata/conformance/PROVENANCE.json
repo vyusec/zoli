@@ -1,0 +1,372 @@
+{
+  "schema": 1,
+  "generator_sha256": "23f8bd0b2a3568b60e7411ddd28e1b8a26ac49864fd0745d778b18efbbf442fc",
+  "generator_files": {
+    "tools/conformance-gen/cache.go": "10540e417454a1adaf1a0fe2845eaeb5e83fae86e1f63e3989e388f009c98310",
+    "tools/conformance-gen/feeds.go": "4765c728409da98eef137f0b7641e96bd3aae1483b118dc46bcab20b43d61d9f",
+    "tools/conformance-gen/main.go": "23f8bd0b2a3568b60e7411ddd28e1b8a26ac49864fd0745d778b18efbbf442fc",
+    "tools/conformance-gen/matrix.go": "cda4a374ef5f585a8552ab0c2e5a98dc9da36c7dac1f13f0e691f206a0ab4f83",
+    "tools/conformance-gen/pypi.go": "144b7f8ddcb46904e1861cee5fd053f956086c646b82ed606d81995b7bf28e8f",
+    "tools/conformance-client/transport.go": "9b557a07029add242d85164bf92e27816c7add82d73ada6a490efa5be6a1ee11"
+  },
+  "wrapper_sha256": "382b570d3e75aacf10f06f180b3411000aba429682c83c54ad27d6ac9359c8a7",
+  "intel_feed_commit": null,
+  "source_tree_sha256": "2fc65e296eef46e32464cdf7d1465ed70b22d981c3cb34d365d539bed35fb429",
+  "source_tree_scope": "All .go, .sql (go:embed), go.mod, go.sum, LICENSE and NOTICE files, excluding .git, bin, target and node_modules; before generator overlay",
+  "go_version": "go version go1.26.10-X:nodwarf5 linux/amd64",
+  "generated_at": "2026-10-29T19:54:22.709004+00:00",
+  "families": [
+    "wire-strings.tsv",
+    "record-encoding.json",
+    "identities.json",
+    "queries.json",
+    "feed-cases.json",
+    "npm-matrix.json",
+    "pypi-matrix.json"
+  ],
+  "limitations": [
+    "A null intel_feed_commit means the source has no Git metadata; the inventoried build inputs identify this local baseline.",
+    "Query fixtures share an explicit clock and cover selected freshness boundaries; the corpus is finite.",
+    "PyPI comparison and exact/event queries are covered; constraint-string matching and pip installation remain separate gates.",
+    "Live-delivery and resource-ceiling tests are separate gates; fixtures do not demonstrate deployed service readiness."
+  ],
+  "source_files": [
+    {
+      "path": "LICENSE",
+      "sha256": "8c6db340475136df3c1201d458fa5755698eace76e510471ecc9d857d6083dac"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "7417832af73a0664662bc4693239f9bca4a4660e76557edbebef97ed45e2dae8"
+    },
+    {
+      "path": "cmd/zoli-intel/main.go",
+      "sha256": "d4d660fd31e34f265c4d57bb0b0906ffcc550f5be7f21cc7a9e4978d31282057"
+    },
+    {
+      "path": "examples/client-check/main.go",
+      "sha256": "ce62bc414a7fc62f4fefa4f1a0d24770ff1df6adda97635bf7ef21759ccfe9a5"
+    },
+    {
+      "path": "examples/source-check/main.go",
+      "sha256": "c8bde3c63454fef01040bb2fcb00a392abb7b12c7017c159d73d564c32f36bae"
+    },
+    {
+      "path": "go.mod",
+      "sha256": "f010bd039f7f192d4664b227531d5d5459b3d70a8549137dcc261d8e84e4e999"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "530786d62476eb289923d375d55da97ba536f4645d94121e14b9bc73bda5ec1d"
+    },
+    {
+      "path": "internal/analysis/analysis_test.go",
+      "sha256": "dbdfd25c61d2786d57d59cb2bf106310738b953c0ab99de6246e4a121da49884"
+    },
+    {
+      "path": "internal/analysis/archive.go",
+      "sha256": "9946c0094c441e9a082b9b5c72718e9923348047b9398178ecb09370bb2f339e"
+    },
+    {
+      "path": "internal/analysis/dependencies.go",
+      "sha256": "0833982a2b4499f802fbf93d0145b0d9c7966ddc4cdf4bb05639c56be5bc3a50"
+    },
+    {
+      "path": "internal/analysis/hash.go",
+      "sha256": "8d14fae8640624c1be3ba47c57a5597d4653110d3249d309a7ef6c56f09230bb"
+    },
+    {
+      "path": "internal/analysis/release_test.go",
+      "sha256": "08a31add94fcc8b373218e5f5d3962cce9a445a9609eb6ff376535b658c7f98b"
+    },
+    {
+      "path": "internal/analysis/rules.go",
+      "sha256": "13c107c455045c9d5edbc995a397b925ee91ac2d438aae2cc6afe7a0e09000a8"
+    },
+    {
+      "path": "internal/analysis/runtime.go",
+      "sha256": "a19b1bb43df267abbbc7c3d218a1912a43a375ae828fe73919aa88a349d80f4a"
+    },
+    {
+      "path": "internal/analysis/runtime_evidence.go",
+      "sha256": "619caae8cb3b8c3fa815801816ce32528708847a4b9cdc127673691348c78bf1"
+    },
+    {
+      "path": "internal/analysis/worker.go",
+      "sha256": "fa9598835617a04b75741da3954178d6f3b297cf0051b482fb3fa3d68bd7e4bf"
+    },
+    {
+      "path": "internal/api/server.go",
+      "sha256": "dd246537c6ab1ce2b6ddc573bf4437360a65a081b750af5e5f838fc58574b3a7"
+    },
+    {
+      "path": "internal/api/server_test.go",
+      "sha256": "662936bcbfdb8c994da2125472264fcd52beecba8dcb51c3d43d3d11d16284db"
+    },
+    {
+      "path": "internal/config/config.go",
+      "sha256": "4bf3ae6afea05bc9e665739e13cbfeb74d4db8914ec06ead68645952b73b7297"
+    },
+    {
+      "path": "internal/config/config_test.go",
+      "sha256": "05f422033660b07bf5aed4b55716029ea45e46be66e6efaed1aa5481fd265832"
+    },
+    {
+      "path": "internal/discovery/discovery.go",
+      "sha256": "a24323fd73455e1e85389dedbec45aba248e5d3a04ef5ca3567e90bc9226a9f4"
+    },
+    {
+      "path": "internal/discovery/discovery_test.go",
+      "sha256": "f920973c054666f4deea72eb27dde0cc363b22ea88c851d72a5799e2e7714675"
+    },
+    {
+      "path": "internal/discovery/lifecycle_test.go",
+      "sha256": "689b686effa55a7fdd6f9b56a217ac14d2d8bd3879ff551f95d4b82f7e092e0e"
+    },
+    {
+      "path": "internal/feed/consumer.go",
+      "sha256": "8c85c6eaa35efba3a1c2232159e3bfe232cecbc14a1a2f6a9679a904f8cda751"
+    },
+    {
+      "path": "internal/feed/feed.go",
+      "sha256": "a0a148cae3b517ce740c928080513fe8996a338e7d1c4cfbf837bfe3847748e4"
+    },
+    {
+      "path": "internal/feed/feed_test.go",
+      "sha256": "7ac4bf7301036ce0a26a57d9c45346a3292d64b90602fd662cb90112675b7e2b"
+    },
+    {
+      "path": "internal/ingest/ingest.go",
+      "sha256": "caf5e13918795e4a82a61d50838a65334583ae4ed68ccab8105d57dd68707010"
+    },
+    {
+      "path": "internal/ingest/ingest_test.go",
+      "sha256": "8c842ef223a571a95573d4b7c13455f727d1a63c6b7f1a1222135887163dcf9c"
+    },
+    {
+      "path": "internal/ingest/parse.go",
+      "sha256": "c929633d9c6ddffc2dc39d72bc7fa735cd2b750b3ffdf64dc51850697d1342d3"
+    },
+    {
+      "path": "internal/ingest/parse_test.go",
+      "sha256": "3dd914621db784771bb220435232725df0303342e38b48a74806fbb2f2b5f69d"
+    },
+    {
+      "path": "internal/model/match.go",
+      "sha256": "0402bac4717c3e351839ad637b1b16a758c5b66778f733229df08b416618630f"
+    },
+    {
+      "path": "internal/model/model.go",
+      "sha256": "f8c561adc6cbabd8d994c173ec2ab7828802b8c766bbf2d058ca85c76a34f687"
+    },
+    {
+      "path": "internal/model/model_test.go",
+      "sha256": "269ed363f8415aa12ebe9cb3356136a5b9c729caccf60268e603e3ad4a7ebcdf"
+    },
+    {
+      "path": "internal/netfetch/client.go",
+      "sha256": "c372cf4dc8268ecf97b36e1c2c8036abbdcc6b03d2ace0ed1c52070b2b2010a9"
+    },
+    {
+      "path": "internal/netfetch/client_test.go",
+      "sha256": "189b5038e15b2bf8e4d4110c22bc9726b164fcd2f2e3b02e2b5c43741c5fae38"
+    },
+    {
+      "path": "internal/service/service.go",
+      "sha256": "d956d7fe8eaa0db8ff7c6456371c854705cfb98dec92ab3d714477c569482042"
+    },
+    {
+      "path": "internal/service/service_test.go",
+      "sha256": "69a3b2097d4358ea459d926a10746dadcd6dc74bfe5000295d1a660f2d6e904c"
+    },
+    {
+      "path": "internal/store/analysis.go",
+      "sha256": "762eef585c5e3b26bcfbb03b526249a6fdd664b9f112f31dd3b80b469223b2d9"
+    },
+    {
+      "path": "internal/store/integration_test.go",
+      "sha256": "a6f16cffec6cf484afff3f38700c877c7e3105220ebcbe2b1c73eea79835c8ab"
+    },
+    {
+      "path": "internal/store/runtime.go",
+      "sha256": "40d0b248bb66f4788ef63b3b4cddb971cd39dfcdb5e58938c5756f564ab81387"
+    },
+    {
+      "path": "internal/store/schema.sql",
+      "sha256": "16a4be0b776da13048593f048a78a648966ffa49b80ff54b6d841ca24a8d977a"
+    },
+    {
+      "path": "internal/store/static_integration_test.go",
+      "sha256": "944c13e11884f9a7fe44db2f042855a1a67bf1170204573006c7238159e1b623"
+    },
+    {
+      "path": "internal/store/store.go",
+      "sha256": "ca399ee96a581c3127fb99bcf545876ea0b436b4c151ff5e8b72e4f4e529255e"
+    },
+    {
+      "path": "internal/store/withdraw.go",
+      "sha256": "aa5f9070d4baa42fc3f068724289cd206012f369d0b3ad38d65748855826f0cf"
+    },
+    {
+      "path": "pkg/client/client.go",
+      "sha256": "62c9543a5a7d23a38a829a07791920fe63a8e719ad8416b940d7bc53f2483776"
+    },
+    {
+      "path": "pkg/client/client_test.go",
+      "sha256": "5a7e46590467bf3fe9d940ab0b7a6639ef9e4126d7667316f0349631418231f5"
+    },
+    {
+      "path": "pkg/client/readiness_test.go",
+      "sha256": "4c07ed9c70a2f6b7e8a385498dd9ca6171a0564d5789bfdcebae8c656c2e67a1"
+    },
+    {
+      "path": "pkg/client/update_test.go",
+      "sha256": "d1a70831b3df4e2e639ccd9cd9a02c09ca0cf5dfd03f8c35544e7dcd67c8d55a"
+    },
+    {
+      "path": "third_party/package-feeds/LICENSE",
+      "sha256": "8c6db340475136df3c1201d458fa5755698eace76e510471ecc9d857d6083dac"
+    },
+    {
+      "path": "third_party/package-feeds/go.mod",
+      "sha256": "edb880f858f3713c98427ef48eeebfd028b39b70fe11e11103174077bd653c89"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/events/handler.go",
+      "sha256": "aa20e381e7ca26869dfb870e0e14b73c64ce5cf7731958a3e1f3c9798d34e95d"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/events/logrus_sink.go",
+      "sha256": "ae60a24f56cd4b412e98828b2dd93bd63634cd380d860c07bf3cf685195696f7"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/events/lossy_feed_event.go",
+      "sha256": "9d28a09f2aa65c051697542aa67b9926abd4494d439abf6c40f1045dbe348e22"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/events/mocks.go",
+      "sha256": "5b6b9d301975adc8b6fe6c6cdc5193dbac3db6885c5054947302fc759c7840ae"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/feeds/feed.go",
+      "sha256": "7f348464515f29a81249ec5e84f7752b947c540654a4d8e98a6b1c723b6c6f72"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/feeds/lossy_logging.go",
+      "sha256": "412b39f85f14db5219eb82f2673742f96d74a3b24c70099602cc2d2424ad2ac2"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/feeds/npm/npm.go",
+      "sha256": "b474bc28157ac5bf3dec4ac21deded18a3bf10fc0b6122f73afea9561c724fff"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/feeds/npm/zoli_client.go",
+      "sha256": "0a420936ea50d768da8d3dd00aeda9072c144394a63376810feb68dcf01c86b7"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/feeds/pypi/pypi.go",
+      "sha256": "5fb1e04a680ad5fd444afa09113c5ca055f3fb109eb9932dca25c91354edb0f5"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/feeds/pypi/zoli_client.go",
+      "sha256": "86f572f12f3f5902b8f5980353ff30d1715dee6eed8d4267d28d3dab41a56975"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/useragent/useragent.go",
+      "sha256": "0bc7345094eaa7f63d9af469ff95e5a0167244ad6dd3ba8f90c248ce150d7894"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/utils/http_requests.go",
+      "sha256": "4232ef6328e5b0d0568119e8af96925cf74265b92087571500e2e018aefc2a21"
+    },
+    {
+      "path": "third_party/package-feeds/pkg/utils/xml_reader.go",
+      "sha256": "2781959e4479eb6c4a628838fcd60d37ecb400478a816ac759e36c33a2ff780a"
+    },
+    {
+      "path": "third_party/semver/LICENSE",
+      "sha256": "8c6db340475136df3c1201d458fa5755698eace76e510471ecc9d857d6083dac"
+    },
+    {
+      "path": "third_party/semver/constraint.go",
+      "sha256": "497186202b173f33939accf8a62191edf03c6b20d32b40bc64928f246bac9d52"
+    },
+    {
+      "path": "third_party/semver/diff.go",
+      "sha256": "83083e19c63e4f160eb9744be66ba4c8981a115d15716ba2c0d9a5f663e4383c"
+    },
+    {
+      "path": "third_party/semver/diff_string.go",
+      "sha256": "32455df16790a9dba97761346d6891cee21e90735369ef9cb8d429ba688fd710"
+    },
+    {
+      "path": "third_party/semver/extension.go",
+      "sha256": "7d4783d5f3e5e209debd89682e714177e10548baff80c7fc5ed46d997dd52eb7"
+    },
+    {
+      "path": "third_party/semver/go.mod",
+      "sha256": "98e0cc8493a65c5cacd8df754a64efeab9483d12960ef098c2599e59fc470c30"
+    },
+    {
+      "path": "third_party/semver/interval.go",
+      "sha256": "bda2f5b60870f11d0ca7b7c7e170b701e15f46ede0851769c78c3f579f01d86e"
+    },
+    {
+      "path": "third_party/semver/lex.go",
+      "sha256": "9a5c8a36ba9230af1af5b8932bcd969d6455c086c0f495bf9cbb24e50172e7b0"
+    },
+    {
+      "path": "third_party/semver/match.go",
+      "sha256": "c7005d74f96b2fc51980e32b32d43a7dc189fbd6847f3bb122157b02d7f3dc87"
+    },
+    {
+      "path": "third_party/semver/maven.go",
+      "sha256": "88598648681f86b0aece068030ab312c88505a367c510e1b47ffadf41421801b"
+    },
+    {
+      "path": "third_party/semver/npm.go",
+      "sha256": "95059721bbbc2f935f5ae3535276ac347803802cc1216fa138aece2acd75b1d1"
+    },
+    {
+      "path": "third_party/semver/pep440.go",
+      "sha256": "0d24cdb8237a6883d3ba51283f04b89b444c3eed9a7931c193ba6092f81ae443"
+    },
+    {
+      "path": "third_party/semver/rubygems.go",
+      "sha256": "9ba369514d53eb53d7759ccf07b0abd00a89dbd3b3f61a599fe205903bca1844"
+    },
+    {
+      "path": "third_party/semver/set.go",
+      "sha256": "8880ce647a1bd65a671c854817ba98f8120952637364bf203bb6a1436877c796"
+    },
+    {
+      "path": "third_party/semver/span.go",
+      "sha256": "5e24af94d9cc891f9093aab0e45356cf0475be37d927d2aa9198473c5c578cf4"
+    },
+    {
+      "path": "third_party/semver/system_string.go",
+      "sha256": "05c79584be53f403c70ce0a4117f7d61c048b668e3c6e99b19ef15877c86e1f4"
+    },
+    {
+      "path": "third_party/semver/token.go",
+      "sha256": "20adf9da962b6fad7d557e5268925e5063db5228c0e792de010f9d254bc880e4"
+    },
+    {
+      "path": "third_party/semver/toktype_string.go",
+      "sha256": "cf5b835393c9a08c387730f4802b212a3d3667a2d3bb09ea738596bc03677fc5"
+    },
+    {
+      "path": "third_party/semver/version.go",
+      "sha256": "012be3246765a8d735ed2cdb9e8335faddc6a3a53ed7d1c73ab9bfb49ca35379"
+    }
+  ],
+  "fixtures": {
+    "wire-strings.tsv": "506294dfb9708431633fdda34d7c8e7bf326ffae0f1c0e9f426b38ce6abea1e5",
+    "record-encoding.json": "f305ce218d6b49a6d3e3816f7651d6af7c709347f53b6c74775a5187c5a3f02b",
+    "identities.json": "d7b13cc1e2a0fe868fbf9cb3cd5793d4e10970ca58dc72f51e0e5e005359be6c",
+    "queries.json": "c371c8239a8f32451ec3d07642bcfd2f9463304719ce5736e4f6747efd3554a1",
+    "feed-cases.json": "7c9eb89c69d6026d72d131d55d879f4653955b5d6ea80657e9954ba1399a7cb6",
+    "npm-matrix.json": "e34ca86397866aeb9e0b46a57951d60ea314018bcb8c23bcb7a08635cbd16600",
+    "pypi-matrix.json": "dbd7018ab22904d7e10c989e0d38af7923e8dd01e986379d24096b5cb70a1bea"
+  }
+}

@@ -16,6 +16,30 @@ zoli-proxy = { path = "crates/zoli-proxy" }
 zoli-pms = { path = "crates/zoli-pms" }
 zoli-shell = { path = "crates/zoli-shell" }
 clap = { version = "4.6", default-features = false, features = ["std", "help", "usage", "error-context", "derive"] }
+anyhow = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", features = ["raw_value"] }
+sha2 = "0.10"
+base64 = "0.22"
+hex = "0.4"
+regex = "1.12"
+url = "2.5"
+time = { version = "0.3", features = ["parsing", "formatting", "macros"] }
+ed25519-dalek = "3.0"
+flate2 = "1.1"
+tar = "0.4"
+tempfile = "3.27"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
+oxc_allocator = "0.115"
+oxc_parser = "0.115"
+oxc_ast = "0.115"
+oxc_ast_visit = "0.115"
+oxc_span = "0.115"
+oxc_semantic = "0.115"
+oxc_syntax = "0.115"
+sysinfo = { version = "0.37", default-features = false, features = ["system"] }
+shlex = "2.0"
+zoli-inspect = { path = "crates/zoli-inspect" }
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "measured_at": "2026-10-29T19:12:54.473961+00:00",
+  "node": "v22.23.1",
+  "npm": "10.9.8",
+  "seed_artifact_requests": 2,
+  "registry_stopped": true,
+  "proxy_unreachable": true,
+  "offline_install_succeeded": true,
+  "transitive_lifecycle_executed_from_cache": true,
+  "conclusion": "Proxy-only interception cannot enforce approval for warm-cache npm ci",
+  "limitations": [
+    "Negative control using inert fixtures; no Zoli install guard is implemented",
+    "Linux host npm only; Docker and other package managers remain ungated"
+  ]
+}

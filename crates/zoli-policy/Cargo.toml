@@ -9,6 +9,11 @@ publish.workspace = true
 
 [dependencies]
 zoli-intel.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+time.workspace = true
+zoli-inspect.workspace = true
 
 [lints]
 workspace = true

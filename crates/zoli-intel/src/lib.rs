@@ -6,9 +6,18 @@
 //! policy; `zoli-policy` turns verdicts into install decisions. See
 //! `docs/decisions/ADR-004-feed-client-faithfulness.md`.
 //!
-//! Phase 0 holds only the shared vocabulary. The trust chain (envelope
-//! signature, artifact checksums, delta application, record hashing) and
-//! version matching arrive in Phase 1 with the conformance suite.
+//! Phase 0 established the shared vocabulary. Phase 1 starts with Go-generated
+//! fixtures and string-encoding primitives in [`wire`]. The trust chain,
+//! complete record serializer and version matching are still to be implemented.
+
+pub mod feed;
+pub mod json;
+pub mod model;
+pub mod net;
+pub mod npm;
+pub mod pypi;
+pub mod query;
+pub mod wire;
 
 use std::fmt;
 use std::str::FromStr;

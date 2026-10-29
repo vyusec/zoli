@@ -1,0 +1,110 @@
+{
+  "arch": "x86_64",
+  "artifact_requests": 24,
+  "fixture": {
+    "compressed_bytes": 1714,
+    "feed": "signed synthetic empty feed",
+    "first_run": "fresh Zoli state; no artifact or analysis-result cache",
+    "packages": 4,
+    "registry": "controlled local HTTPS with certificate verification",
+    "repeated_runs": 5,
+    "source_bytes_per_package_approx": 44000,
+    "source_files": 4
+  },
+  "limitations": [
+    "OS caches were not flushed",
+    "Loopback registry timings do not represent internet downloads",
+    "Synthetic benign fixtures do not measure detection accuracy",
+    "No latency target or result-cache optimization"
+  ],
+  "measured_at": "2026-10-29T17:52:52.19659254Z",
+  "os": "linux",
+  "profile": "debug",
+  "runs": [
+    {
+      "complete": true,
+      "kind": "first",
+      "packages": 4,
+      "stages_ms": {
+        "acquisition": 25,
+        "feed_verification": 17,
+        "inventory": 1,
+        "local_inspection": 204,
+        "query_and_policy": 2,
+        "total": 255
+      },
+      "wall_ms": 260
+    },
+    {
+      "complete": true,
+      "kind": "repeated",
+      "packages": 4,
+      "stages_ms": {
+        "acquisition": 26,
+        "feed_verification": 17,
+        "inventory": 1,
+        "local_inspection": 204,
+        "query_and_policy": 2,
+        "total": 257
+      },
+      "wall_ms": 262
+    },
+    {
+      "complete": true,
+      "kind": "repeated",
+      "packages": 4,
+      "stages_ms": {
+        "acquisition": 31,
+        "feed_verification": 17,
+        "inventory": 1,
+        "local_inspection": 204,
+        "query_and_policy": 2,
+        "total": 261
+      },
+      "wall_ms": 267
+    },
+    {
+      "complete": true,
+      "kind": "repeated",
+      "packages": 4,
+      "stages_ms": {
+        "acquisition": 31,
+        "feed_verification": 17,
+        "inventory": 2,
+        "local_inspection": 204,
+        "query_and_policy": 2,
+        "total": 261
+      },
+      "wall_ms": 266
+    },
+    {
+      "complete": true,
+      "kind": "repeated",
+      "packages": 4,
+      "stages_ms": {
+        "acquisition": 30,
+        "feed_verification": 17,
+        "inventory": 2,
+        "local_inspection": 204,
+        "query_and_policy": 2,
+        "total": 262
+      },
+      "wall_ms": 267
+    },
+    {
+      "complete": true,
+      "kind": "repeated",
+      "packages": 4,
+      "stages_ms": {
+        "acquisition": 31,
+        "feed_verification": 17,
+        "inventory": 2,
+        "local_inspection": 204,
+        "query_and_policy": 2,
+        "total": 262
+      },
+      "wall_ms": 267
+    }
+  ],
+  "schema": 1
+}

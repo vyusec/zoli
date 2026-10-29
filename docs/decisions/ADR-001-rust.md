@@ -14,6 +14,7 @@ Zoli is a single Rust binary, `zoli`, built from a Cargo workspace of small crat
 | --- | --- |
 | `zoli-cli` | Argument parsing, command dispatch, exit codes. The only binary |
 | `zoli-intel` | Verified feed client and verdicts, a faithful Go port (ADR-004) |
+| `zoli-inspect` | Bounded, network-free archive and JS/TS static inspection |
 | `zoli-policy` | Decisions over verdicts; audit records |
 | `zoli-proxy` | Registry-scoped interception proxy (ADR-002) |
 | `zoli-pms` | Package-manager adapters: identification, environment, pre-flight arguments |
@@ -25,7 +26,7 @@ Baseline rules:
 - **Code:** `unsafe_code = "forbid"` workspace-wide. `unwrap`, `expect`, `panic!`, `todo!` and `unimplemented!` are denied outside tests, so a stub cannot crash its way into an allow.
 - **Dependencies:** `cargo-deny` gates advisories, licenses, bans and sources. A new license needs an explicit allowlist entry.
 - **Linking:** Linux releases target musl and are fully static. macOS releases link only system libraries; macOS does not support fully static binaries.
-- **TLS:** rustls, no OpenSSL. The crypto provider (`aws-lc-rs` or `ring`) is chosen in Phase 2 by musl build cost and license.
+- **TLS:** rustls with ring in Phase 1, no runtime OpenSSL dependency. Musl build cost remains a release-build gate. The controlled test registry carries test-only certificates and a public fixture key; those are never used as production trust material.
 - **Platforms:** v1 supports Linux and macOS only.
 
 ## Consequences

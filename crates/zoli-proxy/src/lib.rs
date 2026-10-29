@@ -10,3 +10,5 @@
 /// Registry hosts intercepted by default for npm-family package managers.
 /// Configured registries extend this list; nothing else is ever intercepted.
 pub const NPM_DEFAULT_HOSTS: &[&str] = &["registry.npmjs.org"];
+
+pub mod registry;

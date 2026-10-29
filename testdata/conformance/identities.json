@@ -1,0 +1,162 @@
+[
+  {
+    "name": "npm-default-registry",
+    "input": {
+      "ecosystem": "npm",
+      "name": "zoli-fixture",
+      "version": "1.2.3"
+    },
+    "normalized": {
+      "ecosystem": "npm",
+      "name": "zoli-fixture",
+      "version": "1.2.3",
+      "registry": "https://registry.npmjs.org"
+    }
+  },
+  {
+    "name": "pnpm-alias",
+    "input": {
+      "ecosystem": "pnpm",
+      "name": "@scope/fixture",
+      "version": "1.0.0"
+    },
+    "normalized": {
+      "ecosystem": "npm",
+      "name": "@scope/fixture",
+      "version": "1.0.0",
+      "registry": "https://registry.npmjs.org"
+    }
+  },
+  {
+    "name": "pypi-normalization",
+    "input": {
+      "ecosystem": "pip",
+      "name": "Some_Package.Name",
+      "registry": "https://pypi.org/simple/"
+    },
+    "normalized": {
+      "ecosystem": "PyPI",
+      "name": "some-package-name",
+      "registry": "https://pypi.org"
+    }
+  },
+  {
+    "name": "cargo-registry-alias",
+    "input": {
+      "ecosystem": "rust",
+      "name": "Some-Crate",
+      "registry": "sparse+https://index.crates.io/"
+    },
+    "normalized": {
+      "ecosystem": "Cargo",
+      "name": "some-crate",
+      "registry": "https://crates.io"
+    }
+  },
+  {
+    "name": "registry-host-case",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "https://REGISTRY.NPMJS.ORG/"
+    },
+    "normalized": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "https://registry.npmjs.org"
+    }
+  },
+  {
+    "name": "version-kept-verbatim",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "version": "v1.2.3+build"
+    },
+    "normalized": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "version": "v1.2.3+build",
+      "registry": "https://registry.npmjs.org"
+    }
+  },
+  {
+    "name": "invalid-npm-name",
+    "input": {
+      "ecosystem": "npm",
+      "name": "Uppercase"
+    },
+    "error": "invalid npm package name"
+  },
+  {
+    "name": "unsupported-ecosystem",
+    "input": {
+      "ecosystem": "unknown",
+      "name": "fixture"
+    },
+    "error": "unsupported ecosystem"
+  },
+  {
+    "name": "registry-credentials",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "https://user:pass@example.invalid"
+    },
+    "error": "registry must be an HTTPS base URL without credentials"
+  },
+  {
+    "name": "registry-query",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "https://example.invalid?q=1"
+    },
+    "error": "registry must be an HTTPS base URL without credentials"
+  },
+  {
+    "name": "registry-http",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "http://example.invalid"
+    },
+    "error": "registry must be an HTTPS base URL without credentials"
+  },
+  {
+    "name": "registry-backslash",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "https://example.invalid\\path"
+    },
+    "error": "registry must be an HTTPS base URL without credentials"
+  },
+  {
+    "name": "registry-bad-escape",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "https://example.invalid/%GG"
+    },
+    "error": "registry must be an HTTPS base URL without credentials"
+  },
+  {
+    "name": "registry-control",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "registry": "https://example.invalid/"
+    },
+    "error": "registry must be an HTTPS base URL without credentials"
+  },
+  {
+    "name": "invalid-digest",
+    "input": {
+      "ecosystem": "npm",
+      "name": "fixture",
+      "sha256": "abc"
+    },
+    "error": "sha256 must contain 64 hex characters"
+  }
+]

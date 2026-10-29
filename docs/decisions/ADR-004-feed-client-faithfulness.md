@@ -1,6 +1,6 @@
 # ADR-004: Feed-client faithfulness
 
-- Status: Accepted, 16 October 2026. Items marked *(proposed)* need confirmation at the Phase 1 review.
+- Status: Accepted 16 October 2026; implemented and validated locally 18 October. Live comparison deferred by the user. The original source-reading baseline below is historical; executed fixture provenance identifies the current local handoff without inferring a commit.
 - Reference: the Go client in [`vyusec/intel-feed`](https://github.com/vyusec/intel-feed) at commit [`7919b85`](https://github.com/vyusec/intel-feed/tree/7919b8586cd7d8e2d9777be43d9beb5102154601). The files this ADR relies on are byte-identical (same Git blob hashes) between that commit and the local workspace read on 16 October 2026: `pkg/client/client.go`, `internal/feed/{feed,consumer}.go`, `internal/model/{model,match}.go`, `internal/api/server.go`, `internal/netfetch/client.go`, `docs/feed-format.md` and `third_party/semver/`. `examples/client-check` existed only in the local workspace at that date.
 
 ## Context
@@ -29,7 +29,7 @@ Every type that is hashed or compared byte-for-byte gets a hand-written serializ
 | Slices without `omitempty` | nil is written as `null`, empty as `[]`. Parsing must keep the difference (absent or `null` versus `[]`) |
 | Times | RFC 3339 with up to nine fractional digits. Trailing fractional zeros are trimmed, and the fraction is dropped when zero. A zero UTC offset is written as `Z`; other offsets as `±hh:mm`, keeping the parsed offset. Years outside 0–9999 are an encoding error |
 | Strings | `\"`, `\\`, `\b`, `\f`, `\n`, `\r`, `\t`. Other bytes below 0x20 are written `\u00xx` with lowercase hex. U+2028 and U+2029 are always escaped. DEL and other non-ASCII characters are written raw |
-| HTML | Hash mode (`Encoder.SetEscapeHTML(false)`, used by `RecordsHash` and published rows) writes `<`, `>` and `&` raw. Marshal mode (`json.Marshal`, used by `client-check` comparisons and `Snapshot.Save`) writes `<`, `>` and `&` |
+| HTML | Hash mode (`Encoder.SetEscapeHTML(false)`, used by `RecordsHash` and published rows) writes `<`, `>` and `&` raw. Marshal mode (`json.Marshal`, used by `client-check` comparisons and `Snapshot.Save`) writes `\u003c`, `\u003e` and `\u0026`. Confirmed by Go-generated string fixtures on 17 October 2026 |
 | Rows | `Encoder.Encode` appends `\n` after every row, including the last |
 
 ### 2. Hash input order
@@ -52,7 +52,7 @@ Upstream observation: the publisher orders records with PostgreSQL `ORDER BY id`
 
 Records loaded from a verified cache are not re-validated. Rust replicates these steps.
 
-*(proposed)* For registry URLs, Rust accepts only values already in the form Go would produce: `https`, lowercase host, no credentials, query, fragment or trailing slash. Anything else fails closed, so Rust does not have to reimplement `net/url` re-serialization. Honest publisher output is already normalized, so this costs nothing in practice.
+Registry normalization lowercases authority and trims trailing slashes while preserving explicit ports and Go path spelling. Rust rejects non-ASCII/noncanonical paths, malformed escapes, backslashes, controls and path forms changed by the URL parser. It accepts the canonical subset rather than approximate Go escaping. Honest normalized feed output remains supported; unusual accepted Go URLs can therefore fail closed.
 
 ### 4. Parsing differences (fail closed)
 
@@ -60,6 +60,7 @@ Go's decoder matches field names case-insensitively, keeps the last of duplicate
 
 - **Unknown fields:** Rust ignores them too. This is required for parity, because Go drops unknown fields before hashing.
 - **Case-insensitive names, duplicate keys and invalid UTF-8:** Rust rejects these.
+- **Other conservative parsing:** scalar `null` values, null cache record lists, unsupported timestamp forms, excessive nesting and noncanonical registry paths can be rejected where Go rewrites them. Honest empty update caches use `records: []`. No raw row shortcut bypasses the typed ordered hash check.
 
 Signed Go output never contains any of the three, so this only rejects input that Go would silently rewrite.
 
@@ -71,7 +72,7 @@ Signed Go output never contains any of the three, so this only rejects input tha
 4. Verify Ed25519 over the exact bytes of the `manifest` value: Go's `json.RawMessage`, Rust's `serde_json::value::RawValue`. Never verify a re-serialization. Rust uses `ed25519-dalek` `verify_strict`, which should accept only signatures Go accepts. It also rejects small-order and non-canonical encodings that an honest publisher never produces. Envelope fixtures pin this.
 5. Check the manifest:
    - `schema_version` is `1.0`.
-   - `sequence` is greater than the previous sequence minus one. An equal sequence is a no-op that returns the previous snapshot. A lower sequence is a rollback and is rejected.
+   - `sequence` is nonnegative and cannot decrease. An equal sequence reuses the previous verified cache only when the raw-manifest digest also agrees. Both the Go and Rust clients enforce this comparison as of 30 October 2026.
    - Each file passes Go's exact `safePath` rule, has a 64-character `sha256`, and has `bytes ≥ 0`. `safePath` admits `.` and `..`. That is harmless because the bytes are hash-pinned. Mirror the rule and report it upstream.
 6. Check each artifact before decompressing: its size equals `bytes` and is at most 256 MiB, and the SHA-256 of the compressed bytes equals `sha256`.
 7. Decompress gzip **including concatenated members**. Go's reader is multistream, so use `flate2::read::MultiGzDecoder`, not `GzDecoder`. The expansion limit is 512 MiB, and reaching exactly the limit is already an error.
@@ -92,7 +93,7 @@ Signed Go output never contains any of the three, so this only rejects input tha
     - `remove` must not carry a record.
     - Any other operation is an error.
 11. Full snapshot: use the **first** descriptor with `kind == "snapshot"` and an empty ecosystem. Decode and validate each row, then check the record count and hash. If there is no such descriptor, fail.
-12. Persist only after the count and hash check, and do it atomically: a temporary file in the same directory, mode 0600, fsync, then rename.
+12. Persist only after complete verification: exclusive update lock, staged cache file and fsync, independent high-water state containing key ID/sequence/manifest digest, then cache replacement and directory fsync. State commits before cache. Restart between the two refuses reads until a verified update repairs the cache. Corrupt state is never reset automatically. Local cached JSON additionally has a 512 MiB storage bound.
 
 ### 6. Query semantics (mirror exactly)
 
@@ -109,17 +110,21 @@ Signed Go output never contains any of the three, so this only rejects input tha
   - Any exact or range match gives `known_match`.
   - Only uncertain matches give `insufficient_information`.
   - A would-be `no_known_match` becomes `insufficient_information` when the version is empty, freshness is not `current`, or a Conda query lacks channel, subdir or build.
-- **Clock:** Go reads the wall clock (`time.Since`). Rust takes `now` as a parameter. Fixtures use timestamps far in the past or future, so Go's output does not depend on when the generator runs.
+- **Clock:** Go `Query` takes one clock reading and delegates to `QueryAt`; Rust also receives `now`. Fixtures call both at `2026-10-18T00:00:00Z`, including exact one-hour and five-minute future-skew boundaries. Missing source lists and publication/source timestamps more than five minutes ahead are degraded.
 
-*(proposed)* For version comparison and range evaluation, Rust ports the npm system of the vendored `deps.dev/util/semver`. That code is in `intel-feed/third_party/semver`: an unmodified Apache-2.0 subset of about 2.8k lines on the npm path. Zoli does not adopt an existing Rust semver crate, because those parse versions with different leniency and prerelease rules. PyPI (PEP 440) is ported the same way in Phase 3.
+For version comparison and range evaluation, Rust implements the npm interval/prerelease semantics of vendored `deps.dev/util/semver`, with Apache-2.0 attribution in the source and NOTICE. It uses no generic Rust semver replacement. The finite oracle matrix covers 2,072 constraint/version cases and 1,369 version comparisons. Phase 3 now adds concrete PyPI comparison and exact/OSV-event feed queries, checked by 6,084 Go comparisons and 15 additional byte-exact queries. PyPI constraint-string ranges and malformed event boundaries refuse the entire query until their parity gates pass. The Rust comparator intentionally follows the pinned Go implementation, including its epoch limits and local-label ordering; full pip resolver/constraint equivalence is not claimed. See [Phase 3](../phase3-python.md).
 
-### 7. Cache format *(proposed)*
+### 7. Cache format
 
 Rust writes its cache in Go's `Snapshot` JSON shape, `{"envelope":{…},"records":[…]}`, and keeps the manifest's raw bytes. Each client can then load the other's cache. This exists as a conformance check, not as a migration feature.
 
 ## Conformance fixtures
 
 Go `internal/` visibility means `feed.Sign`, `feed.RecordsHash`, `feed.ApplyDelta` and `api.Query` can only be called from inside the `zoli.dev/intel-feed` module. The generator therefore lives in intel-feed, for example as `cmd/conformance-gen`. It writes into `Zoli/testdata/conformance/` and records the intel-feed commit, plus SHA-256 hashes of itself and of the source tree it ran against. The tree hash catches uncommitted local changes. Fixtures are generated and never hand-edited.
+
+The generator lives in Zoli under `tools/conformance-gen/`. The wrapper copies inventoried intel-feed build inputs into temporary storage and overlays `cmd/conformance-gen` plus a development-only HTTP transport seam, preserving production verification/update logic and `internal/` access without editing upstream. `PROVENANCE.json` hashes every generator file, wrapper, copied source and fixture, and records the Go version. A handoff without Git metadata has a null commit.
+
+Seven families now cover strings, records, identities, queries, signed feed updates/deltas/caches, npm semantics and concrete PyPI comparisons. `make cache-conformance` additionally exports Rust-written caches and runs the actual Go `client.Load` on each; 16 positive caches authenticated. Rust loads/verifies the Go-produced positive caches in its ordinary conformance tests. The temporary memory transport is fixture evidence, not live network evidence.
 
 | Family | Cases |
 | --- | --- |
@@ -133,11 +138,13 @@ Go `internal/` visibility means `feed.Sign`, `feed.RecordsHash`, `feed.ApplyDelt
 ## Phase 1 acceptance gate
 
 1. For every query fixture, Rust's response in marshal mode is byte-identical to Go's `json.Marshal` of `api.Query`.
-2. Both clients reject every negative fixture. Both accept every positive fixture with the same resulting sequence, record count and records hash.
+2. Both clients reject the shared negative fixtures and agree on positives, with equivocation now rejected by both clients. Positive resulting sequence, count, ordered hash and cache bytes agree.
 3. A cache written by either client loads and verifies in the other.
 4. Live check: on the same deployed feed, Rust `zoli check` and Go `client-check` agree on `sequence`, `record_count`, `status` and `freshness`.
 
 **Plan correction for gate 4.** `client-check` cannot target a locally deployed feed. Go's `netfetch` connects only to port 443 on public, globally routable addresses and refuses loopback and private destinations. Gate 4 therefore needs a publicly reachable HTTPS staging feed, which intel-feed's own Phase 1 needs anyway. A local comparison through the generator's in-memory transport counts as fixture evidence, not live evidence.
+
+As of 18 October, gates 1–3 pass against the recorded corpus. Gate 4 remains pending and was explicitly deferred by the user. No production trust or SSRF restriction was weakened to simulate it.
 
 ## Consequences
 

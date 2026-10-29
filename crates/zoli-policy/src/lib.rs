@@ -6,10 +6,13 @@
 //! setting. Defaults are in `docs/configuration.md`; the decision table and
 //! audit records land in Phase 1.
 
+use serde::{Deserialize, Serialize};
 pub use zoli_intel::{Classification, Freshness, QueryStatus};
+pub mod assessment;
 
 /// What Zoli does with one package version.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Action {
     /// Let the package manager proceed. A banner may still accompany it.
     Allow,
@@ -20,7 +23,8 @@ pub enum Action {
 }
 
 /// Where Zoli runs. CI escalates some warnings to blocks.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Mode {
     /// A developer terminal.
     Interactive,

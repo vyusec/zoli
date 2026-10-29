@@ -17,7 +17,7 @@ jobs:
           persist-credentials: false
       # Installs the toolchain pinned in rust-toolchain.toml.
       - run: rustup toolchain install
-      - run: make fmt-check clippy
+      - run: make fmt-check conformance-check clippy
   deny:
     name: cargo-deny
     runs-on: ubuntu-latest
@@ -41,4 +41,10 @@ jobs:
         with:
           persist-credentials: false
       - run: rustup toolchain install
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - run: npm install --global npm@10.9.8
       - run: make build test
+      - if: runner.os == 'Linux'
+        run: make npm-guard-container

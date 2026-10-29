@@ -17,7 +17,9 @@ ignore = []
 
 [licenses]
 # Extend only when a new dependency needs it, and say which in the commit.
-allow = ["Apache-2.0", "MIT", "Unicode-3.0"]
+# Phase 1: BSD-3-Clause for dalek/subtle; BSL-1.0 for Oxc's dragonbox;
+# ISC for ring/webpki/untrusted; CDLA-Permissive-2.0 for Mozilla root data.
+allow = ["Apache-2.0", "MIT", "Unicode-3.0", "BSD-3-Clause", "BSL-1.0", "ISC", "CDLA-Permissive-2.0"]
 confidence-threshold = 0.93
 
 [bans]

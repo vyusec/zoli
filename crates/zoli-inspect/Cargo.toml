@@ -1,0 +1,29 @@
+[package]
+name = "zoli-inspect"
+description = "Bounded, network-free npm artifact inspection"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+zoli-intel.workspace = true
+base64.workspace = true
+hex.workspace = true
+flate2.workspace = true
+tar.workspace = true
+oxc_allocator.workspace = true
+oxc_parser.workspace = true
+oxc_ast.workspace = true
+oxc_ast_visit.workspace = true
+oxc_span.workspace = true
+oxc_semantic.workspace = true
+oxc_syntax.workspace = true
+shlex.workspace = true
+
+[lints]
+workspace = true

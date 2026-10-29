@@ -8,7 +8,7 @@ Zoli needs to know which package versions are malicious or suspicious. The candi
 
 ## Decision
 
-v1 uses only the Zoli intel feed, consumed locally from a verified cache.
+v1 uses only the Zoli intel feed as its external intelligence source, consumed locally from a verified cache. [ADR-006](ADR-006-local-package-analysis.md), accepted in direction on 17 October 2026, adds local static observations as a separate evidence channel; it does not modify Go-compatible feed verdicts or add hosted lookups.
 
 - **Tokenless.** Feed downloads are public, and Zoli needs no account or API key.
 - **No hosted lookups.** Zoli does not call `/v1/query` or `/v1/querybatch` at install time. Every verdict comes from the local verified cache.

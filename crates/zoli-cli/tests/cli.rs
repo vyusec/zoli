@@ -1,4 +1,4 @@
-//! Phase 0 contract: the command surface exists and every command fails closed.
+//! Stable command surface and refusal of future install interception commands.
 
 #![allow(clippy::expect_used, clippy::unwrap_used)]
 
@@ -17,7 +17,7 @@ fn help_lists_every_command() {
     assert!(out.status.success());
     let help = String::from_utf8(out.stdout).unwrap();
     for command in [
-        "wrap", "serve", "check", "update", "status", "shims", "doctor",
+        "wrap", "serve", "check", "update", "status", "inspect", "scan", "shims", "doctor",
     ] {
         assert!(help.contains(command), "help is missing {command}");
     }
@@ -35,22 +35,6 @@ fn unimplemented_commands_fail_closed() {
     let cases: &[&[&str]] = &[
         &["wrap", "npm", "--", "install", "left-pad"],
         &["serve"],
-        &[
-            "check", "--eco", "npm", "--name", "left-pad", "--ver", "1.3.0",
-        ],
-        &[
-            "check",
-            "--eco",
-            "npm",
-            "--name",
-            "left-pad",
-            "--ver",
-            "1.3.0",
-            "--suspicious",
-            "block",
-        ],
-        &["update"],
-        &["status"],
         &["shims", "install", "--shell", "bash"],
         &["shims", "uninstall", "--shell", "fish"],
         &["shims", "install", "--ci"],
@@ -91,11 +75,11 @@ fn usage_errors_exit_2() {
     }
 }
 
-/// `zoli wrap` must not start the real package manager before Phase 2 can
-/// guard it. A fake `npm` on PATH records whether it was ever executed.
+/// Unsupported ad-hoc installs must not reach the package manager. A fake npm
+/// records whether an entry point outside the locked ci guard was executed.
 #[cfg(unix)]
 #[test]
-fn wrap_never_starts_the_package_manager() {
+fn unsupported_wrap_never_starts_the_package_manager() {
     use std::os::unix::fs::PermissionsExt;
     use std::path::PathBuf;
 

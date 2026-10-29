@@ -2,6 +2,8 @@
 
 Baseline: 16 October 2026. Implementation lands in Phase 2 (interactive shells) and Phase 4 (CI). Until then `zoli shims` exits with code 3 and changes nothing.
 
+The implemented entry point is explicit `zoli wrap npm -- ci`. The integration and nested-invocation behavior below describe future work, not installed protection.
+
 ## Interactive shells
 
 `zoli shims install --shell bash|zsh|fish` writes one generated file and one marked block.

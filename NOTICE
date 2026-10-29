@@ -1,0 +1,10 @@
+Zoli
+Copyright 2026 Zoli contributors
+
+crates/zoli-intel/src/npm.rs and pypi.rs adapt npm and concrete PyPI semantics in
+deps.dev/util/semver (Copyright 2023 Google LLC), distributed under Apache-2.0.
+The Go oracle's exact source inventory is testdata/conformance/PROVENANCE.json.
+
+Dependency license choices added for Phase 1 are documented in deny.toml:
+BSD-3-Clause (dalek/subtle), BSL-1.0 (dragonbox_ecma), ISC (ring/webpki/untrusted),
+and CDLA-Permissive-2.0 (webpki-roots certificate data).

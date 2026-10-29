@@ -1,14 +1,22 @@
-# ADR-002: Proxy plus pre-flight interception
+# ADR-002: Complete preflight and controlled installation
 
-- Status: Accepted, 16 October 2026. Items marked *(verify in Phase 2)* are assumptions the Phase 2 Docker gate must confirm.
+- Status: Updated 30 October 2026. Locked npm ci uses the approved-cache design below. Broader proxy interception remains a proposal with separate acceptance gates.
 
 ## Context
 
-Zoli must stop a malicious or too-new package version before its bytes reach the machine. That includes transitive dependencies and installs from lockfiles (`npm ci`), which fetch tarballs from recorded `resolved` URLs without reading registry metadata. Zoli must do this without editing project files, lockfiles or `.npmrc`, and it must cover npm, npx, pnpm and Yarn, with Bun best-effort.
+Zoli must stop a disallowed package before its archive reaches the package manager or its lifecycle scripts run. Unknown candidate bytes may enter Zoli's bounded quarantine for inspection. This includes transitive dependencies and installs from lockfiles (`npm ci`), which may skip registry metadata and use cached archives. Zoli must preserve project files, lockfiles and `.npmrc`. npm is the first adapter; broader entry points need their own evidence.
 
-## Decision
+## Implemented decision: locked npm ci
 
-Two layers. The proxy enforces; pre-flight gives early, readable answers.
+The first guard supports npm 10 and `zoli wrap npm -- ci` only. It reads the complete supported lockfile inventory, checks the authenticated feed, fetches full exact-version publish metadata, enforces the user-selected **24-hour** default age, verifies both lockfile and registry integrity, and statically inspects quarantined artifacts. Missing timestamps and unsupported sources refuse installation. An old timestamp cannot approve an archive with a different registry digest.
+
+Only after a complete audited approval does Zoli populate a fresh private cache with `npm cache add --offline --ignore-scripts`, outside the project. It then reloads current verified intelligence, recomputes policy at the final clock, rechecks project/config fingerprints and durably records authorization before starting `npm ci --offline`. Operational npm environment/config overrides are removed or rejected. The user cache is never used; project files are not rewritten. The cache/quarantine is discarded on return.
+
+This needs neither a TLS interception listener nor a local CA. npm stdout/stderr and exit status are preserved. The local project, approved scripts and npm/Node executables are trusted execution; arbitrary runtime activity and nested installers are outside this initial-install guarantee. See [guard configuration](../configuration.md#guarded-npm-ci) and [validation](../validation.md#foundation-hardening--30-october-2026).
+
+## Proposed extension: broader resolution and interception
+
+For ad-hoc resolution, the original proxy design below remains unimplemented. It must retain complete inventory/cache control; a proxy alone cannot enforce installation policy.
 
 1. **Pre-flight (`zoli wrap`).** Before starting the package manager, Zoli reads direct install arguments such as `npm install foo@1.2.3` or `npx foo@1.2.3`. Exact versions are checked immediately, and a block stops the run before the package manager starts. Names without a version, and ranges, cannot be resolved without the registry. Pre-flight leaves those to the proxy and never treats them as allowed.
 2. **Proxy (`zoli serve`).** A listener on `127.0.0.1` only. `zoli wrap` starts the package manager with `HTTPS_PROXY` (plus per-manager equivalents) pointing at it.
@@ -21,7 +29,7 @@ Two layers. The proxy enforces; pre-flight gives early, readable answers.
 
 ## Consequences
 
-- **Fail closed when Zoli is down.** If the proxy is not running, the wrapped package manager cannot reach the registry.
+- **Network failure is insufficient for fail-closed installation.** The 30 October [warm-cache probe](../foundations.md) ran `npm ci --offline` and a transitive inert lifecycle hook with the registry stopped and all proxy addresses unreachable. A wrapper must approve the complete inventory before starting npm and prevent reuse of unassessed cache entries. Merely setting proxy/CA variables cannot meet the install gate.
 - **Escape hatches remain a residual risk:** unaliased binaries, absolute paths, Corepack shims and environment overrides. They are listed in the threat model and reduced by PATH shims in CI.
 - **Explicit `ca`/`cafile` in `.npmrc`.** Node documents that an explicit `ca` option replaces both the default and the extra roots. Wrapped processes with such configuration are expected to fail TLS against the proxy. That fails closed, but breaks corporate setups until Zoli merges the user's CA bundle with its own. *(verify in Phase 2)*
 - **Existing proxies.** A corporate `HTTPS_PROXY` must be chained as Zoli's upstream, not replaced.

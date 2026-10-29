@@ -7,4 +7,6 @@ Hand-written fixtures for Zoli-only behaviour that has no Go counterpart:
 - policy decision tables;
 - audit-log lines.
 
-Anything that touches verdicts belongs in `../conformance/` and is generated from Go. Empty until Phase 1.
+Phase 1 controlled fixtures are constructed by the Rust integration tests in `zoli-inspect`, `zoli-pms`, `zoli-policy` and `zoli-cli`. They cover archives, local evidence, graph gaps, process exits, HTTPS authentication and audit behavior. The recorded timing output is in `../benchmarks/`.
+
+Anything that defines Go verdict behavior belongs in `../conformance/` and is generated from Go. Package-manager preflight and shell integration fixtures remain Phase 2 work.
