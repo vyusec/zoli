@@ -189,7 +189,6 @@ pub fn command(home: &Path, args: &[&str]) -> Output {
         .env_clear()
         .env("HOME", home)
         .env("ZOLI_HOME", home)
-        .env("ZOLI_DEBUG_NET", "1")
         .args(args);
     // Keep ordinary process facilities available (DNS/TLS helpers and the
     // platform temporary directory) while still removing user configuration.
@@ -270,6 +269,9 @@ impl Server {
                     }
                     Err(_) => return,
                 };
+                // macOS may return an accepted socket that inherited the
+                // listener's nonblocking flag; TLS reads must block normally.
+                socket.set_nonblocking(false).unwrap();
                 socket
                     .set_read_timeout(Some(Duration::from_secs(2)))
                     .unwrap();
@@ -283,11 +285,7 @@ impl Server {
                 while header.len() < 16_384 && !header.ends_with(b"\r\n\r\n") {
                     match stream.read(&mut byte) {
                         Ok(1) => header.push(byte[0]),
-                        Ok(_) => break,
-                        Err(error) => {
-                            eprintln!("zoli test server read error: {error}");
-                            break;
-                        }
+                        _ => break,
                     }
                 }
                 if !header.ends_with(b"\r\n\r\n") {
