@@ -29,14 +29,15 @@ repo = Path(__file__).resolve().parents[1]
 os.chdir(repo)
 build = run(
     "cargo", "test", "-p", "zoli-cli", "--locked", "--test", "npm_guard",
-    "--no-run", "--message-format=json", capture_output=True, text=True,
+    "--test", "npm_adhoc", "--no-run", "--message-format=json",
+    capture_output=True, text=True,
 )
-test = next(
-    Path(item["executable"])
+tests = {
+    item["target"]["name"]: Path(item["executable"])
     for line in build.stdout.splitlines()
     if (item := json.loads(line)).get("executable")
-    and item.get("target", {}).get("name") == "npm_guard"
-)
+    and item.get("target", {}).get("name") in {"npm_guard", "npm_adhoc"}
+}
 image = "zoli-npm-guard-test:" + uuid.uuid4().hex
 with tempfile.TemporaryDirectory(prefix="zoli-container-") as directory:
     context = Path(directory)
@@ -67,7 +68,9 @@ with tempfile.TemporaryDirectory(prefix="zoli-container-") as directory:
     npm = Path(shutil.which("npm")).resolve()
     shutil.copytree(npm.parent.parent, root / "opt/npm", symlinks=False)
     (root / "bin/npm").symlink_to("/opt/npm/bin/npm-cli.js")
-    binary(test)
+    (root / "bin/npx").symlink_to("/opt/npm/bin/npx-cli.js")
+    binary(tests["npm_guard"], "/tests/npm_guard")
+    binary(tests["npm_adhoc"], "/tests/npm_adhoc")
     binary(repo / "target/debug/zoli")
     copy(repo / "testdata/mock-registry/tls/ca.pem")
     # Keep compile-time paths resolvable, including lexical ../.. in CA paths.
@@ -75,7 +78,13 @@ with tempfile.TemporaryDirectory(prefix="zoli-container-") as directory:
     (root / "tmp").mkdir()
     (context / "Dockerfile").write_text(
         "FROM scratch\nCOPY root /\nENV PATH=/bin\n"
-        + "ENTRYPOINT " + json.dumps([str(test), "--test-threads=1", "--nocapture"]) + "\n"
+        + "ENTRYPOINT "
+        + json.dumps([
+            "/bin/sh", "-c",
+            "/tests/npm_guard --test-threads=1 --nocapture && "
+            "/tests/npm_adhoc --test-threads=1 --nocapture",
+        ])
+        + "\n"
     )
     try:
         run("docker", "build", "--network=none", "--tag", image, str(context))

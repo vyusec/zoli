@@ -321,6 +321,40 @@ func feedFixtures(dir string) error {
 			return err
 		}
 	}
+	// Signed PyPI snapshots consumed by the real Rust CLI, including interacting
+	// findings. Use the fixed clock; the CLI must refuse future evidence even
+	// when a matching query itself succeeds. Unit policy checks use this clock.
+	for _, name := range []string{"pypi-range", "pypi-mixed", "pypi-withdrawn", "pypi-artifact", "pypi-registry"} {
+		r := record()
+		r.Affected[0].Package = model.Identity{Ecosystem: "PyPI", Name: "some-package", Registry: "https://pypi.org"}
+		r.Affected[0].Versions = nil
+		r.Affected[0].Ranges = []model.Range{{Type: "constraint", Constraint: ">=1,<3,!=1.5,!=2"}}
+		if name == "pypi-withdrawn" {
+			r.Status = "withdrawn"
+		}
+		if name == "pypi-artifact" {
+			r.Affected[0].Package.SHA256 = fmt.Sprintf("%064d", 1)
+		}
+		if name == "pypi-registry" {
+			r.Affected[0].Package.Registry = "https://private.example.invalid"
+		}
+		records := []model.Record{r}
+		if name == "pypi-mixed" {
+			other := record()
+			other.ID = "ZOLI-000000000000000000000002"
+			other.Affected[0].Package = r.Affected[0].Package
+			other.Affected[0].Versions = nil
+			other.Affected[0].Ranges = []model.Range{{Type: "constraint", Constraint: "===1"}}
+			records = append(records, other)
+		}
+		m, responses, err := build(records, 2)
+		if err != nil {
+			return err
+		}
+		if err := add(name, m, responses, nil, nil, false); err != nil {
+			return err
+		}
+	}
 	_ = baseResponses
 	return writeJSON(dir, "feed-cases.json", cases)
 }

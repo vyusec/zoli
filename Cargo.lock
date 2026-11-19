@@ -2485,6 +2485,7 @@ name = "zoli-pms"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "regex",
  "serde",
  "serde_json",
  "tempfile",
@@ -2523,5 +2524,7 @@ dependencies = [
 name = "zoli-shell"
 version = "0.0.0"
 dependencies = [
+ "anyhow",
+ "tempfile",
  "zoli-pms",
 ]

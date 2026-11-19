@@ -14,7 +14,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 DESTINATION = ROOT / "testdata" / "conformance"
-GENERATED = ("wire-strings.tsv", "record-encoding.json", "identities.json", "queries.json", "feed-cases.json", "npm-matrix.json", "pypi-matrix.json")
+GENERATED = ("wire-strings.tsv", "record-encoding.json", "identities.json", "queries.json", "feed-cases.json", "npm-matrix.json", "pypi-matrix.json", "pypi-constraints.json", "pypi-seeded.json.gz")
 
 
 def generator_files():
@@ -99,7 +99,7 @@ def run(args):
         "limitations": [
             "A null intel_feed_commit means the source has no Git metadata; the inventoried build inputs identify this local baseline.",
             "Query fixtures share an explicit clock and cover selected freshness boundaries; the corpus is finite.",
-            "PyPI comparison and exact/event queries are covered; constraint-string matching and pip installation remain separate gates.",
+            "PyPI comparisons, constraints and exact/event queries follow the pinned Go implementation, not pip resolution; bounded resource refusals are tested separately.",
             "Live-delivery and resource-ceiling tests are separate gates; fixtures do not demonstrate deployed service readiness.",
         ],
         "source_files": inventory,

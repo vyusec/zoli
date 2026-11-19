@@ -1,22 +1,22 @@
 # Roadmap
 
-Updated: 30 October 2026 (Asia/Kolkata). [Progress](progress.md) records capability status; [validation](validation.md) records executed checks. The user approved npm feed checks plus local static analysis, with correctness before speed, and the locked npm guard with a 24-hour minimum age. The 29 October live check authenticated a degraded feed; healthy deployed acceptance remains open.
+Updated: 20 November 2026 (Asia/Kolkata). [Progress](progress.md) records capability status; [validation](validation.md) records executed checks. Phase 2's supported npm guard is now implemented and locally validated, including locked `ci`, ad-hoc `install`, `npx`, shell/PATH shims and `doctor`. Healthy deployed-feed acceptance and hosted CI remain open operational gates; `serve` and non-npm managers remain explicitly unsupported.
 
 ## Locked decisions
 
 | ADR | Decision |
 | --- | --- |
 | [ADR-001](decisions/ADR-001-rust.md) | One Rust binary; Linux/macOS target |
-| [ADR-002](decisions/ADR-002-interception.md) | Approved offline cache for locked npm ci; proxy for wider resolution remains planned |
+| [ADR-002](decisions/ADR-002-interception.md) | Approved offline cache for guarded npm ci/install/npx; proxy interception deferred |
 | [ADR-003](decisions/ADR-003-intel-sources.md) | Zoli signed feed is the only external v1 intelligence source |
 | [ADR-004](decisions/ADR-004-feed-client-faithfulness.md) | Go-compatible wire/hash/query semantics with generated oracle fixtures |
-| [ADR-005](decisions/ADR-005-trust-bootstrap.md) | Pinned key, independent rollback state; proxy CA later |
+| [ADR-005](decisions/ADR-005-trust-bootstrap.md) | Pinned key, independent rollback state; no proxy CA in the supported path |
 | [ADR-006](decisions/ADR-006-local-package-analysis.md) | npm artifact inspection, separate local evidence, explicit coverage and conservative aggregate policy |
 | [ADR-007](decisions/ADR-007-terminal-interface.md) | Ratatui for the planned interactive TUI; shared assessment/policy models and preserved CLI/JSON/npm behavior |
 
-Malicious matches block even when uncertain. Suspicion warns interactively and blocks in CI. Publication and every source must be within one hour; errors/missing freshness evidence block immediately. Unsupported executable/opaque content refuses completion. Private HTTPS registries use explicitly approved origins, scoped trusted npmrc credentials and per-origin private-network permission. Package code never executes during assessment; approved npm ci lifecycle scripts execute normally.
+Malicious matches block even when uncertain. Suspicion warns interactively and blocks in CI. Publication and every source must be within one hour; errors/missing freshness evidence block immediately. Unsupported executable/opaque content refuses completion. Private HTTPS registries use explicitly approved origins, scoped trusted npmrc credentials and per-origin private-network permission. Package code never executes during assessment; approved npm lifecycle scripts execute normally after release.
 
-The user authorized beginning [Phase 3](phase3-python.md) on 30 October after the local foundation pass. The [foundation acceptance matrix](foundations.md) retains unresolved release/operational gates. A 30 October real npm negative control confirms that warm-cache lifecycle execution bypasses a dead proxy. The locked npm guard now addresses it with a private approved cache.
+The user authorized beginning [Phase 3](phase3-python.md) on 30 October after the local foundation pass. The [foundation acceptance matrix](foundations.md) retains unresolved release/operational gates. A 30 October real npm negative control confirms that warm-cache lifecycle execution bypasses a dead proxy. The npm guard addresses it with a private approved cache for `ci`, `install` and `npx`.
 
 ## Phases and exit gates
 
@@ -24,8 +24,8 @@ The user authorized beginning [Phase 3](phase3-python.md) on 30 October after th
 | --- | --- | --- | --- |
 | 0 — Baseline | Workspace, ADRs, pinned toolchain, CI, docs | Dated baseline; build and CI green | Complete since 16 October; local revalidation passed before Phase 1; original [hosted run](https://github.com/vyusec/zoli/actions/runs/38869463032) |
 | 1 — Decision core and package assessment | Verified feed, npm inventory/acquisition, local inspection, policy, audit and CLI | Local conformance, trust/recovery, inventory, artifact and aggregate gates; shared deployed feed comparison | Implementation/local checks complete. Live gate explicitly deferred; no new hosted run claimed |
-| 2 — npm guard | `serve`, wrapping/shims, quarantine until decision, minimum age, block UX, doctor | Real npm direct/transitive, lockfile and warm-cache Docker tests; unapproved bytes never released; normal output preserved | Locked npm ci implemented and locally tested; broader entry points, shims/doctor and deployment gates remain |
-| 3 — Python guard | pip/uv/poetry/pipx adapters and PEP 440 parity | Real pip and relisted-package gate | Started: concrete PyPI comparison, exact/event feed checks and pip hash-pinned input reader; Python installation remains gated |
+| 2 — npm guard | Guarded `npm ci`, `npm install`, `npx`, quarantine until decision, 24-hour minimum age, block UX, shell/PATH shims and `doctor` | Real npm direct/transitive, lockfile, ad-hoc and npx tests plus the warm-cache Docker gate; unapproved bytes never released; normal output preserved | **Complete locally for npm (20 November 2026).** `serve`, non-npm managers and healthy deployed-feed operation remain outside this local gate |
+| 3 — Python guard | pip/uv/poetry/pipx adapters and PEP 440 parity | Real pip and relisted-package gate | Matching/input milestone (20% checklist): Go-compatible comparison/constraints, exact/event checks and hardened pinned-input reader; Python installation remains gated |
 | 4 — Install/CI | Checksum-pinned installer, CI PATH shims, release matrix and uninstall | Static Linux musl, x86_64/arm64 macOS releases and recipe gates | Not started |
 | 5 — Hardening | Rotation/recovery and extended resource/freshness abuse checks | Trust regression suite and failure-path evidence | Not started; Phase 1 already enforces initial freshness, storage and resource bounds |
 
@@ -61,8 +61,8 @@ The generator overlays development-only Go code and an in-memory transport seam 
 
 1. Repeat the shared-feed comparison after homelab source health is repaired, including broader queries and correction/withdrawal replay.
 2. Observe hosted CI for these changes before relying on new macOS behavior.
-3. Complete remaining Phase 2 entry-point and operational gates using the locked npm guard as the tested foundation.
-4. Continue [Phase 3](phase3-python.md) with constraint parity, wheel inspection and a guarded pip path; keep heavy local work capped at half of one CPU core.
+3. Extend guarded installation to other package managers only after each adapter has equivalent resolution, cache and bypass tests.
+4. Continue [Phase 3](phase3-python.md) with wheel inspection, complete dependency selection and a guarded pip path; keep heavy local work capped at half of one CPU core.
 5. Profile representative real projects before indexes, bounded concurrency, incremental scans or result caching. A future faster mode must disclose omissions and retain trust, integrity and policy checks.
 
 ## Open questions
@@ -73,10 +73,10 @@ The generator overlays development-only Go code and an in-memory transport seam 
 | OQ-2 | Resolved: user selected 24 hours; missing timestamps block | 2 |
 | OQ-3 | Resolved: degraded sources block immediately; no permissive banner grace period | Implemented |
 | OQ-4 | Resolved: one-hour hard bound on publication and every source, including local final-clock check | Implemented |
-| OQ-5 | Per-wrap versus long-lived proxy lifecycle; measure startup cost | 2 |
+| OQ-5 | Deferred: the approved-cache design needs no interception listener for supported npm commands; revisit proxy lifecycle for other managers | After Phase 2 |
 | OQ-6 | Retarget removed `dist-tags.latest` to highest remaining stable version with notice | 2 |
 | OQ-7 | Resolved: three versioned local flow rules, informational hooks/eval, bounded archive/worker/AST defaults; see configuration | Implemented |
-| OQ-8 | Resolved for locked npm ci: complete preflight, byte-verified quarantine and private offline cache; broader entry points still need gates | Before Phase 2 completion |
+| OQ-8 | Resolved 20 November: locked `ci`, ad-hoc `install` and `npx` use complete preflight, byte-verified quarantine, a private approved cache and final input/feed rechecks; other managers and `serve` remain out of scope | Implemented for supported npm entry points |
 | OQ-9 | Resolved: SHA-256/384/512, strongest wins; SHA-1-only/missing/unsupported work incomplete | Implemented |
 
 ## Plan corrections found in Phase 0

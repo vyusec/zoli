@@ -33,12 +33,12 @@ fn version_is_reported() {
 #[test]
 fn unimplemented_commands_fail_closed() {
     let cases: &[&[&str]] = &[
-        &["wrap", "npm", "--", "install", "left-pad"],
         &["serve"],
-        &["shims", "install", "--shell", "bash"],
-        &["shims", "uninstall", "--shell", "fish"],
-        &["shims", "install", "--ci"],
-        &["doctor"],
+        &["wrap", "pnpm", "--", "install"],
+        &["wrap", "pnpx", "--", "tool"],
+        &["wrap", "yarn", "--", "add", "left-pad"],
+        &["wrap", "bun", "--", "install"],
+        &["wrap", "bunx", "--", "tool"],
     ];
     for args in cases {
         let out = zoli(args);
@@ -75,8 +75,8 @@ fn usage_errors_exit_2() {
     }
 }
 
-/// Unsupported ad-hoc installs must not reach the package manager. A fake npm
-/// records whether an entry point outside the locked ci guard was executed.
+/// Unsupported package managers must not reach the package manager. A fake
+/// pnpm records whether an entry point outside the guarded npm adapters ran.
 #[cfg(unix)]
 #[test]
 fn unsupported_wrap_never_starts_the_package_manager() {
@@ -86,16 +86,53 @@ fn unsupported_wrap_never_starts_the_package_manager() {
     let dir = PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("wrap-never-runs");
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).unwrap();
-    let marker = dir.join("npm-ran");
-    let fake = dir.join("npm");
+    let marker = dir.join("pnpm-ran");
+    let fake = dir.join("pnpm");
     std::fs::write(&fake, format!("#!/bin/sh\ntouch '{}'\n", marker.display())).unwrap();
     std::fs::set_permissions(&fake, std::fs::Permissions::from_mode(0o755)).unwrap();
 
     let out = Command::new(env!("CARGO_BIN_EXE_zoli"))
-        .args(["wrap", "npm", "--", "install", "left-pad"])
+        .args(["wrap", "pnpm", "--", "install", "left-pad"])
         .env("PATH", &dir)
         .output()
         .unwrap();
     assert_eq!(out.status.code(), Some(3));
     assert!(!marker.exists(), "zoli wrap started the package manager");
+}
+
+/// A guarded npm install must fail before npm starts when the feed configuration
+/// is missing, even if a fake npm is the only executable on PATH.
+#[cfg(unix)]
+#[test]
+fn unconfigured_npm_install_never_starts_the_package_manager() {
+    use std::os::unix::fs::PermissionsExt;
+    use std::path::PathBuf;
+
+    let dir = PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("npm-install-never-runs");
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+    let marker = dir.join("npm-ran");
+    let fake = dir.join("npm");
+    std::fs::write(&fake, format!("#!/bin/sh\ntouch '{}'\n", marker.display())).unwrap();
+    std::fs::set_permissions(&fake, std::fs::Permissions::from_mode(0o755)).unwrap();
+    std::fs::write(
+        dir.join("package.json"),
+        br#"{"name":"x","version":"1.0.0"}"#,
+    )
+    .unwrap();
+
+    let out = Command::new(env!("CARGO_BIN_EXE_zoli"))
+        .current_dir(&dir)
+        .args(["wrap", "npm", "--", "install"])
+        .env_clear()
+        .env("HOME", &dir)
+        .env("ZOLI_HOME", &dir)
+        .env("PATH", &dir)
+        .output()
+        .unwrap();
+    assert_eq!(out.status.code(), Some(1));
+    assert!(
+        !marker.exists(),
+        "zoli wrap started npm without configuration"
+    );
 }

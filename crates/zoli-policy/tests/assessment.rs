@@ -187,3 +187,61 @@ fn final_clock_recheck_rejects_future_publication_and_source_times() {
         }
     }
 }
+
+#[test]
+fn a_healthy_source_never_masks_an_unhealthy_second_source() {
+    let (now, original, v) = evidence();
+    for state in ["stale", "missing", "future", "error"] {
+        let mut m = original.clone();
+        let mut source = m.sources.as_ref().unwrap()[0].clone();
+        source.name = "second".into();
+        match state {
+            "stale" => source.last_success = Some(GoTime::parse("2026-10-18T08:59:59Z").unwrap()),
+            "future" => {
+                source.last_success = Some(GoTime::parse("2026-10-18T10:05:00.000000001Z").unwrap())
+            }
+            "missing" => source.last_success = None,
+            _ => source.error = "unavailable".into(),
+        }
+        m.sources.as_mut().unwrap().push(source);
+        assert_eq!(code(&now, &m, &v, Mode::Interactive), 10, "{state}");
+        m.sources.as_mut().unwrap().reverse();
+        assert_eq!(code(&now, &m, &v, Mode::Interactive), 10, "{state}");
+    }
+}
+
+#[test]
+fn exact_source_freshness_boundary_is_inclusive_to_the_nanosecond() {
+    let (now, mut m, v) = evidence();
+    for (stamp, expected) in [
+        ("2026-10-18T08:59:59.999999999Z", 10),
+        ("2026-10-18T09:00:00Z", 0),
+        ("2026-10-18T09:00:00.000000001Z", 0),
+    ] {
+        m.sources.as_mut().unwrap()[0].last_success = Some(GoTime::parse(stamp).unwrap());
+        assert_eq!(code(&now, &m, &v, Mode::Interactive), expected);
+    }
+}
+
+#[test]
+fn malicious_findings_dominate_suspicious_policy_and_record_order() {
+    let (now, m, mut v) = evidence();
+    v.matches = Some(
+        ["suspicious", "malicious"]
+            .map(|classification| Match {
+                record: Record {
+                    classification: classification.into(),
+                    ..Default::default()
+                },
+                certainty: "uncertain".into(),
+                ..Default::default()
+            })
+            .to_vec(),
+    );
+    for mode in [Mode::Interactive, Mode::Ci] {
+        for _ in 0..2 {
+            assert_eq!(code(&now, &m, &v, mode), 10);
+            v.matches.as_mut().unwrap().reverse();
+        }
+    }
+}

@@ -1,10 +1,10 @@
 # ADR-005: Trust bootstrap
 
-- Status: Accepted 16 October; feed state/storage implementation updated 18 October 2026. Proxy CA proposals marked *(verify in Phase 2)* still need evidence before Zoli relies on them.
+- Status: Accepted 16 October; feed state/storage implementation updated 18 October 2026; proxy status updated 20 November 2026. The supported npm guard uses no proxy CA: no `ca/` material is generated, stored or trusted. Proxy CA proposals below are deferred and are not relied on.
 
 ## Context
 
-Zoli's guarantees rest on three anchors: the pinned feed key, the Zoli binary, and the local proxy CA. Each needs a defined origin, storage, rotation path and failure behaviour.
+Zoli's current guarantees rest on two anchors: the pinned feed key and the Zoli binary. A local proxy CA was proposed for the deferred interception design; it is not part of the supported approved-cache path. Each anchor needs a defined origin, storage, rotation path and failure behaviour.
 
 ## Decision
 
@@ -29,7 +29,7 @@ Feed networking remains public HTTPS port 443 only. Registry private-network/cus
 - **Origin.** Generated locally on first use (rcgen). It is never shipped and never shared between machines.
 - **Storage.** The private key is kept at mode 0600 under `~/.zoli/ca/`. Leaf certificates are short-lived and held in memory.
 - **Scope of trust.** Only processes launched by `zoli wrap` trust the CA, through `NODE_EXTRA_CA_CERTS` and per-manager equivalents. It is never added to system or keychain trust stores in v1.
-- **Name constraints** *(proposed, verify in Phase 2)*. The CA certificate carries X.509 name constraints that limit it to allowlisted registry hosts, so a stolen CA key cannot impersonate other sites to wrapped processes. Zoli relies on this only after the Phase 2 gate shows Node and OpenSSL enforce constraints on a trust anchor.
+- **Name constraints** *(deferred)*. If a future proxy CA is adopted, its certificate would carry X.509 name constraints limiting it to allowlisted registry hosts. No CA is generated or trusted today.
 
 ### The binary itself
 

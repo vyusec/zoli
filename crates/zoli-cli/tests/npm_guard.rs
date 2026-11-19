@@ -372,6 +372,90 @@ fn publish_age_cannot_be_borrowed_for_different_registry_artifact_bytes() {
     );
 }
 
+#[test]
+fn bundled_dependencies_inherit_the_container_publication_age() {
+    let bytes = archive(&[
+        (
+            "package/package.json",
+            br#"{"name":"fixture","version":"1.0.0","dependencies":{"child":"1.0.0"},"bundledDependencies":["child"]}"#,
+        ),
+        (
+            "package/node_modules/child/package.json",
+            br#"{"name":"child","version":"1.0.0"}"#,
+        ),
+    ]);
+    let response = bytes.clone();
+    let server = Server::new(move |request| {
+        let path = request.split_whitespace().nth(1).unwrap();
+        if path == "/npm/fixture.tgz" {
+            return (200, vec![], response.clone());
+        }
+        assert_eq!(path, "/npm/fixture", "bundled child must not be fetched");
+        let stamp = (time::OffsetDateTime::now_utc() - time::Duration::hours(48))
+            .format(&time::format_description::well_known::Rfc3339)
+            .unwrap();
+        (
+            200,
+            vec![],
+            serde_json::to_vec(&json!({"name":"fixture","versions":{"1.0.0":{"version":"1.0.0","dist":{"integrity":integrity(&response)}}},"time":{"1.0.0":stamp}}))
+                .unwrap(),
+        )
+    });
+    let home = home(vec![]);
+    let project = tempfile::tempdir().unwrap();
+    configure(home.path(), |config| {
+        config["registries"] = json!({"npm":[server.registry()]})
+    });
+    std::fs::write(
+        home.path().join(".npmrc"),
+        format!("registry={}/npm\n", server.origin),
+    )
+    .unwrap();
+    std::fs::write(
+        project.path().join("package.json"),
+        serde_json::to_vec(
+            &json!({"name":"app","version":"1.0.0","dependencies":{"fixture":"1.0.0"}}),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        project.path().join("package-lock.json"),
+        serde_json::to_vec(&json!({"lockfileVersion":3,"packages":{
+            "":{"name":"app","version":"1.0.0","dependencies":{"fixture":"1.0.0"}},
+            "node_modules/fixture":{"version":"1.0.0","resolved":format!("{}/npm/fixture.tgz",server.origin),"integrity":integrity(&bytes),"dependencies":{"child":"1.0.0"},"bundleDependencies":["child"]},
+            "node_modules/fixture/node_modules/child":{"version":"1.0.0","inBundle":true}
+        }}))
+        .unwrap(),
+    )
+    .unwrap();
+    let output = run(home.path(), project.path(), &["--foreground-scripts"]);
+    assert_code(&output, 0);
+    assert!(
+        project
+            .path()
+            .join("node_modules/fixture/node_modules/child/package.json")
+            .is_file()
+    );
+    let release = audit(home.path())
+        .into_iter()
+        .find(|value| value["scope"] == "npm_ci_release")
+        .unwrap();
+    let child = release["packages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|package| package["package"]["path"] == "node_modules/fixture/node_modules/child")
+        .unwrap();
+    assert_eq!(child["decision"]["exit_code"], 0);
+    assert!(
+        child["age_evidence"]
+            .as_str()
+            .unwrap()
+            .starts_with("bundling_parent:node_modules/fixture")
+    );
+}
+
 #[cfg(unix)]
 #[test]
 fn changed_feed_after_cache_population_is_rechecked_before_execution() {

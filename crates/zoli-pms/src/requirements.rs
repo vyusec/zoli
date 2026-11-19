@@ -2,8 +2,25 @@
 //! This does not resolve transitive dependencies or authorize installation.
 use anyhow::{Context, Result, ensure};
 use serde::Serialize;
-use std::{collections::BTreeSet, path::Path};
+use std::{collections::BTreeSet, path::Path, sync::OnceLock};
 use zoli_intel::{feed::read_bounded, model::Identity, pypi};
+
+/// Maximum UTF-8 input size, including comments and continuations.
+pub const MAX_BYTES: usize = 1 << 20;
+/// Maximum physical lines, including blank lines and comments.
+pub const MAX_LINES: usize = 10_000;
+
+// PyPA's version grammar, kept separate from the Go-compatible feed parser.
+// Acceptance requires both: Go quirks such as `1..a1` must not become pip pins.
+const PIN_VERSION: &str = concat!(
+    r"(?ix)^v?(?:[0-9]+!)?[0-9]+(?:\.[0-9]+)*",
+    r"(?:[-_.]?(?:alpha|beta|preview|pre|rc|a|b|c)[-_.]?[0-9]*)?",
+    r"(?:(?:-[0-9]+)|(?:[-_.]?(?:post|rev|r)[-_.]?[0-9]*))?",
+    r"(?:[-_.]?dev[-_.]?[0-9]*)?",
+    r"(?:\+[a-z0-9]+(?:[-_.][a-z0-9]+)*)?$",
+);
+static VERSION_GRAMMAR: OnceLock<Result<regex::Regex, regex::Error>> = OnceLock::new();
+static ENCODING_DECLARATION: OnceLock<Result<regex::Regex, regex::Error>> = OnceLock::new();
 
 /// One exact requirement and its allowed SHA-256 artifact digests.
 #[derive(Debug, Serialize)]
@@ -35,7 +52,11 @@ impl Requirements {
     /// Read at most 1 MiB as UTF-8. The trusted registry is supplied by the caller;
     /// index options in the file cannot select or authorize a new destination.
     pub fn read(path: &Path, registry: &str) -> Result<Self> {
-        let bytes = read_bounded(path, 1 << 20)?;
+        ensure!(
+            std::fs::symlink_metadata(path)?.file_type().is_file(),
+            "requirements input must be a regular file, not a symlink or special file"
+        );
+        let bytes = read_bounded(path, MAX_BYTES)?;
         Self::parse(
             std::str::from_utf8(&bytes).context("requirements must be UTF-8")?,
             registry,
@@ -44,7 +65,17 @@ impl Requirements {
     /// Parse exact `name==version --hash=sha256:...` pins, comments and continuations.
     /// Extras, markers, includes, constraints, editable/URL paths and options are gaps.
     pub fn parse(text: &str, registry: &str) -> Result<Self> {
-        ensure!(text.len() <= 1 << 20, "requirements byte limit exceeded");
+        ensure!(text.len() <= MAX_BYTES, "requirements byte limit exceeded");
+        // Configuration errors are not per-line input gaps. Validate once even
+        // for an empty file, and never return registry credentials in a report.
+        let mut source = Identity {
+            ecosystem: "PyPI".into(),
+            name: "requirements".into(),
+            registry: registry.into(),
+            ..Default::default()
+        };
+        source.normalize()?;
+        let registry = source.registry.as_str();
         let mut result = Self {
             packages: vec![],
             gaps: vec![],
@@ -53,8 +84,21 @@ impl Requirements {
         let mut pending = false;
         let mut start = 1;
         let mut seen = BTreeSet::new();
+        let encoding = ENCODING_DECLARATION
+            .get_or_init(|| regex::Regex::new(r"^[ \t]*#.*coding[:=][ \t]*[-_.a-zA-Z0-9]+"))
+            .as_ref()
+            .map_err(|_| anyhow::anyhow!("invalid built-in encoding declaration grammar"))?;
         for (index, physical) in text.lines().enumerate() {
-            ensure!(index < 10_000, "requirements line limit exceeded");
+            ensure!(index < MAX_LINES, "requirements line limit exceeded");
+            // PEP 263 headers can select a different decoder in pip. This
+            // reader accepts already-decoded UTF-8 only; never hide a decoder
+            // instruction among ordinary comments, even if it names UTF-8.
+            if index < 2 && encoding.is_match(physical) {
+                result.gaps.push(Gap {
+                    line: index + 1,
+                    reason: "unsupported_encoding_declaration".into(),
+                });
+            }
             if !pending {
                 start = index + 1;
             }
@@ -68,8 +112,13 @@ impl Requirements {
             if continuation {
                 continue;
             }
-            let line = strip_comment(&logical).trim();
-            if !line.is_empty() {
+            let line = strip_comment(&logical).trim_matches([' ', '\t']);
+            if logical.bytes().any(|b| b.is_ascii_control() && b != b'\t') {
+                result.gaps.push(Gap {
+                    line: start,
+                    reason: "unsupported_control_character".into(),
+                });
+            } else if !line.is_empty() {
                 match pin(line, start, registry) {
                     Ok(package) => {
                         if !seen.insert(package.identity.name.clone()) {
@@ -102,6 +151,17 @@ impl Requirements {
         }
         Ok(result)
     }
+
+    /// Return pins only when this file has no unsupported or ambiguous input.
+    /// This proves input completeness, not transitive dependency completeness,
+    /// artifact approval or permission to start an installer.
+    pub fn complete_pins(&self) -> Result<&[Requirement]> {
+        ensure!(
+            self.gaps.is_empty() && !self.packages.is_empty(),
+            "requirements contain gaps or no package pins"
+        );
+        Ok(&self.packages)
+    }
 }
 fn strip_comment(line: &str) -> &str {
     for (i, c) in line.char_indices() {
@@ -125,6 +185,18 @@ fn pin(line: &str, number: usize, registry: &str) -> Result<Requirement> {
         .trim()
         .split_once("==")
         .context("requirement must be exactly pinned")?;
+    ensure!(
+        name.trim()
+            .as_bytes()
+            .last()
+            .is_some_and(u8::is_ascii_alphanumeric),
+        "invalid pip package name"
+    );
+    let grammar = VERSION_GRAMMAR
+        .get_or_init(|| regex::Regex::new(PIN_VERSION))
+        .as_ref()
+        .map_err(|_| anyhow::anyhow!("invalid built-in pin version grammar"))?;
+    ensure!(grammar.is_match(version.trim()), "invalid pip version pin");
     let mut identity = Identity {
         ecosystem: "PyPI".into(),
         name: name.trim().into(),

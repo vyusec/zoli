@@ -1,6 +1,6 @@
 # ADR-006: Local package analysis alongside verified feed verdicts
 
-- Status: Accepted 17 October; Phase 1 implementation and local validation complete 18 October. The user confirmed static analysis plus feed checks, npm first, and correctness ahead of speed. Live feed comparison was explicitly deferred.
+- Status: Accepted 17 October; Phase 1 implementation and local validation complete 18 October; Phase 2 install integration completed locally 20 November 2026. The user confirmed static analysis plus feed checks, npm first, and correctness ahead of speed. Live feed comparison was explicitly deferred.
 
 ## Context
 
@@ -44,7 +44,7 @@ Package bytes are untrusted. Downloading and inspecting them must not install th
 - Preserve evidence against the original artifact digest and original file/line locations. Decode constant strings only with bounded transforms; record the transform chain.
 - Unsupported syntax, native executables, WebAssembly, encrypted content and skipped large/binary files affect the completion report. Their absence from a text scan is not an all-clear.
 
-Phase 2 must withhold the entire unapproved archive from the package manager until inspection and policy finish. Known blocked packages can be rejected before download; unknown packages may first be downloaded into Zoli's quarantine. Warm package-manager caches, lockfile installs, bundled artifacts and alternate download URLs need explicit bypass tests before install protection is claimed.
+Phase 2 withholds the entire unapproved archive from the package manager until inspection and policy finish. Known blocked packages are rejected before download; unknown packages are downloaded into Zoli's quarantine. Warm npm caches, lockfile installs, ad-hoc installs, npx, bundled artifacts and alternate download URLs have explicit bypass/refusal tests for the supported npm entry points. Non-npm managers remain gated.
 
 ### First analysis coverage
 
@@ -97,7 +97,7 @@ There is no latency target for the first implementation. Resource ceilings remai
 
 - ADR-003 still governs external intelligence sources. Local observations form a separate evidence channel and are not added to the signed feed automatically.
 - `zoli-intel` remains independent of package scanning and keeps the Go parity gate.
-- A new network-free analyzer crate and aggregate report are needed. Phase 1 grows to include their implementation gates; Phase 2 still owns actual install interception.
+- A new network-free analyzer crate and aggregate report were added in Phase 1. Phase 2 now owns guard integration for npm: approved-cache release, bundled inheritance, ad-hoc install/npx, shims and doctor. Non-npm adapters remain gated.
 - False positives and incomplete coverage are first-class validation targets. Include benign build hooks, ordinary networking, minified bundles and documentation containing dangerous-looking examples.
 - Publishing local findings upstream, running a hosted analyzer, new external reputation APIs or executing packages requires a separate design decision.
 

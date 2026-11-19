@@ -1,12 +1,40 @@
 // Copyright 2023 Google LLC; Rust adaptation copyright 2026 Zoli contributors.
 // SPDX-License-Identifier: Apache-2.0
 // Port of concrete comparison in intel-feed/third_party/semver/pep440.go.
-//! Concrete PyPI version comparison against the Go feed's PEP 440 implementation.
-//! Constraint-string evaluation is deliberately not implemented yet.
+//! PyPI comparison and constraints against the pinned Go feed implementation.
+//! These are feed semantics, not pip resolution semantics. See
+//! `docs/phase3-python.md` for compatibility limits and the generated oracle.
 use anyhow::{Result, ensure};
 use std::cmp::Ordering;
 
-#[derive(Default)]
+mod constraints;
+pub use constraints::matches;
+
+/// Maximum encoded version length accepted by the comparison API.
+pub const MAX_VERSION_BYTES: usize = 1024;
+/// Maximum release components, bounding comparisons and boundary construction.
+pub const MAX_RELEASE_COMPONENTS: usize = 64;
+
+#[derive(Debug)]
+struct ResourceLimit(&'static str);
+impl std::fmt::Display for ResourceLimit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.0)
+    }
+}
+impl std::error::Error for ResourceLimit {}
+fn within_limit(allowed: bool, message: &'static str) -> Result<()> {
+    if !allowed {
+        return Err(ResourceLimit(message).into());
+    }
+    Ok(())
+}
+/// Resource refusal must abort a query rather than become a semantic non-match.
+pub(crate) fn is_resource_limit(error: &anyhow::Error) -> bool {
+    error.is::<ResourceLimit>()
+}
+
+#[derive(Default, Debug, Clone)]
 struct Version {
     epoch: u8,
     release: Vec<i64>,
@@ -14,6 +42,11 @@ struct Version {
     post: Option<i64>,
     dev: Option<i64>,
     local: String,
+    user_components: usize,
+    // Go's != operator creates plain semver sentinels without a PEP extension.
+    // Comparison with those sentinels deliberately ignores epoch/post/dev/local.
+    has_extension: bool,
+    was_prerelease: bool,
 }
 fn separator(s: &str) -> &str {
     s.strip_prefix(['.', '_', '-']).unwrap_or(s)
@@ -47,13 +80,28 @@ fn possible(s: &str) -> bool {
 }
 impl Version {
     fn parse(raw: &str) -> Result<Self> {
+        let version = Self::pattern(raw)?;
+        ensure!(
+            !version.release.contains(&-1),
+            "expected concrete PyPI version"
+        );
+        Ok(version)
+    }
+    fn pattern(raw: &str) -> Result<Self> {
+        within_limit(
+            raw.len() <= MAX_VERSION_BYTES,
+            "PyPI version byte limit exceeded",
+        )?;
         ensure!(possible(raw), "invalid PyPI version");
         let mut s = raw.trim();
         ensure!(
             s.bytes().all(|b| (33..127).contains(&b)),
             "invalid PyPI version character"
         );
-        let mut v = Self::default();
+        let mut v = Self {
+            has_extension: true,
+            ..Self::default()
+        };
         if let Some((epoch, tail)) = s.split_once('!') {
             ensure!(
                 !epoch.is_empty() && epoch.bytes().all(|b| b.is_ascii_digit()),
@@ -65,10 +113,20 @@ impl Version {
         s = s.strip_prefix(['v', 'V']).unwrap_or(s);
         loop {
             let n = s.bytes().take_while(u8::is_ascii_digit).count();
-            if n == 0 {
+            let wildcard = n == 0 && s.starts_with('*');
+            if n == 0 && !wildcard {
                 break;
             }
-            let value: i64 = s[..n].parse()?;
+            within_limit(
+                v.release.len() < MAX_RELEASE_COMPONENTS,
+                "PyPI release component limit exceeded",
+            )?;
+            let n = if wildcard { 1 } else { n };
+            ensure!(
+                !wildcard || !v.release.is_empty(),
+                "wildcard first component"
+            );
+            let value: i64 = if wildcard { -1 } else { s[..n].parse()? };
             ensure!(value < i64::MAX, "PyPI release number out of range");
             v.release.push(value);
             s = &s[n..];
@@ -80,6 +138,10 @@ impl Version {
             }
         }
         ensure!(!v.release.is_empty(), "PyPI version has no release numbers");
+        v.user_components = v.release.len();
+        if v.release.last() != Some(&-1) {
+            v.release.resize(v.release.len().max(3), 0);
+        }
         for (label, rank) in [
             ("alpha", 1),
             ("a", 1),
@@ -97,6 +159,7 @@ impl Version {
             {
                 let (num, tail) = number(&tail[label.len()..]);
                 v.pre = Some((rank, num));
+                v.was_prerelease = true;
                 s = tail;
                 break;
             }
@@ -155,10 +218,27 @@ impl Version {
         }
     }
     fn cmp(&self, other: &Self) -> Ordering {
+        if !self.has_extension || !other.has_extension {
+            return self
+                .compare_release(other)
+                .then_with(|| match (self.pre, other.pre) {
+                    (None, None) => Ordering::Equal,
+                    (None, Some(_)) => Ordering::Greater,
+                    (Some(_), None) => Ordering::Less,
+                    (Some(a), Some(b)) => a.cmp(&b),
+                });
+        }
         let epoch = self.epoch.cmp(&other.epoch);
         if epoch != Ordering::Equal {
             return epoch;
         }
+        let release = self.compare_release(other);
+        if release != Ordering::Equal {
+            return release;
+        }
+        self.compare_suffix(other)
+    }
+    fn compare_release(&self, other: &Self) -> Ordering {
         for i in 0..self.release.len().max(other.release.len()) {
             let order = self
                 .release
@@ -169,6 +249,9 @@ impl Version {
                 return order;
             }
         }
+        Ordering::Equal
+    }
+    fn compare_suffix(&self, other: &Self) -> Ordering {
         let rank = self.rank().cmp(&other.rank());
         if rank != Ordering::Equal {
             return rank;

@@ -209,6 +209,16 @@ impl NpmConfig {
                 .unwrap_or(&self.registry),
         )
     }
+    /// Effective registry routes without credentials, including the default.
+    pub fn routes(&self) -> Vec<(Option<String>, String)> {
+        let mut routes = vec![(None, self.registry.clone())];
+        routes.extend(
+            self.scopes
+                .iter()
+                .map(|(scope, url)| (Some(scope.clone()), url.clone())),
+        );
+        routes
+    }
     /// Select only credentials belonging to this origin and a matching path.
     pub fn authorization(&self, url: &Url) -> Result<Option<String>> {
         // Registries and reverse proxies can disagree on encoded separators.

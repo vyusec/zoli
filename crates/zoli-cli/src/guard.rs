@@ -35,11 +35,17 @@ pub fn apply_age(decision: &mut Decision, published: Option<&GoTime>, hours: u64
     decision.reasons.push(reason.into());
 }
 
-fn executable(name: &str) -> Result<PathBuf> {
-    let path = std::env::var_os("PATH").context("PATH is required to locate npm")?;
+pub(crate) fn executable(name: &str, zoli_home: &Path) -> Result<PathBuf> {
+    let skip = zoli_shell::ci_directory(zoli_home);
+    let skip = skip.canonicalize().unwrap_or(skip);
+    let path =
+        std::env::var_os("PATH").context("PATH is required to locate the package manager")?;
     for dir in std::env::split_paths(&path) {
         // Never resolve a manager from an implicit working-directory entry.
         if !dir.is_absolute() {
+            continue;
+        }
+        if dir == skip || dir.canonicalize().is_ok_and(|resolved| resolved == skip) {
             continue;
         }
         let candidate = dir.join(name);
@@ -53,15 +59,15 @@ fn executable(name: &str) -> Result<PathBuf> {
             }
             return candidate
                 .canonicalize()
-                .context("cannot resolve npm executable");
+                .context("cannot resolve package manager executable");
         }
     }
-    anyhow::bail!("npm executable not found on an absolute PATH entry")
+    anyhow::bail!("{name} executable not found on an absolute PATH entry")
 }
 
-struct Inputs(BTreeMap<PathBuf, Option<Vec<u8>>>);
+pub(crate) struct Inputs(pub(crate) BTreeMap<PathBuf, Option<Vec<u8>>>);
 impl Inputs {
-    fn capture(project: &Path, home: &Path) -> Result<Self> {
+    pub(crate) fn capture(project: &Path, home: &Path) -> Result<Self> {
         let mut files = BTreeMap::new();
         for path in [
             project.join("package.json"),
@@ -86,19 +92,19 @@ impl Inputs {
         }
         Ok(Self(files))
     }
-    fn verify(&self, project: &Path, home: &Path) -> Result<()> {
+    pub(crate) fn verify(&self, project: &Path, home: &Path) -> Result<()> {
         ensure!(
             self.0 == Self::capture(project, home)?.0,
             "project or Zoli configuration changed during assessment; run again"
         );
         Ok(())
     }
-    fn digest(&self) -> Result<String> {
+    pub(crate) fn digest(&self) -> Result<String> {
         Ok(sha256(&serde_json::to_vec(&self.0)?))
     }
 }
 
-fn project_config(project: &Path) -> Result<()> {
+pub(crate) fn project_config(project: &Path) -> Result<()> {
     let path = project.join(".npmrc");
     if !path.exists() {
         return Ok(());
@@ -121,12 +127,13 @@ fn project_config(project: &Path) -> Result<()> {
     Ok(())
 }
 
-fn npm_command(
+pub(crate) fn npm_command(
     program: &Path,
     workspace: &Path,
     cache: &Path,
     user: &Path,
     global: &Path,
+    offline: bool,
 ) -> Command {
     let mut command = Command::new(program);
     command.current_dir(workspace);
@@ -146,37 +153,53 @@ fn npm_command(
     }
     command
         .env("npm_config_cache", cache)
-        .env("npm_config_offline", "true")
+        .env("npm_config_offline", if offline { "true" } else { "false" })
         .env("npm_config_userconfig", user)
         .env("npm_config_globalconfig", global)
         .env("npm_config_audit", "false")
         .env("npm_config_fund", "false")
-        .env("npm_config_update_notifier", "false");
+        .env("npm_config_update_notifier", "false")
+        .env("ZOLI_WRAPPED", "1");
     command
 }
 
-fn refresh(
+pub(crate) fn refresh(
     cli: &Cli,
     config: &config::Config,
     home: &Path,
     report: &mut TreeAssessment,
     hours: u64,
+    scope: &'static str,
 ) -> Result<()> {
     let key = config.key()?;
     let snapshot = Store::new(home.into()).load(&key)?;
     let manifest = snapshot.verify(&key)?;
     let now = GoTime::now();
+    let containers: BTreeMap<String, zoli_inspect::Report> = report
+        .packages
+        .iter()
+        .filter_map(|node| {
+            node.local_analysis
+                .clone()
+                .map(|local| (node.package.path.clone(), local))
+        })
+        .collect();
     for node in &mut report.packages {
         let mut id = node.package.identity.clone();
         if let Some(local) = &node.local_analysis {
             id.sha256 = local.artifact_sha256.clone();
         }
+        let local = node.local_analysis.clone().or_else(|| {
+            node.analysis_container
+                .as_ref()
+                .and_then(|container| containers.get(container).cloned())
+        });
         let verdict = zoli_intel::query::query(id, &manifest, &snapshot.records, &now)?;
         node.decision = decide(
             Evidence {
                 verdict: Some(&verdict),
                 manifest: Some(&manifest),
-                local: node.local_analysis.as_ref(),
+                local: local.as_ref(),
                 require_feed: true,
                 require_local: true,
                 gaps: report
@@ -211,11 +234,11 @@ fn refresh(
     report.record_count = manifest.record_count;
     report.freshness = verdict.freshness;
     report.time = now;
-    report.scope = "npm_ci_release";
+    report.scope = scope;
     Ok(())
 }
 
-fn code(status: ExitStatus) -> u8 {
+pub(crate) fn code(status: ExitStatus) -> u8 {
     if let Some(code) = status.code() {
         return u8::try_from(code).unwrap_or(1);
     }
@@ -229,7 +252,98 @@ fn code(status: ExitStatus) -> u8 {
     1
 }
 
-pub fn run(cli: &Cli, args: &[String]) -> Result<u8> {
+pub(crate) struct Seed<'a> {
+    pub program: &'a Path,
+    pub workspace: &'a Path,
+    pub cache: &'a Path,
+    pub user: &'a Path,
+    pub global: &'a Path,
+    pub quarantine: &'a Path,
+    pub max_bytes: usize,
+}
+
+pub(crate) fn seed_cache(seed: Seed<'_>, report: &TreeAssessment) -> Result<()> {
+    let Seed {
+        program,
+        workspace,
+        cache,
+        user,
+        global,
+        quarantine,
+        max_bytes,
+    } = seed;
+    for node in &report.packages {
+        if node.package.bundled {
+            continue;
+        }
+        let local = node
+            .local_analysis
+            .as_ref()
+            .context("approved artifact report missing")?;
+        let file = quarantine.join(format!("{}.tgz", local.artifact_sha256));
+        let bytes = read_bounded(&file, max_bytes)?;
+        ensure!(
+            sha256(&bytes) == local.artifact_sha256,
+            "quarantined artifact changed"
+        );
+        let seeded = npm_command(program, workspace, cache, user, global, true)
+            .args([
+                "cache",
+                "add",
+                "--offline",
+                "--ignore-scripts",
+                "--audit=false",
+                "--fund=false",
+            ])
+            .arg(&file)
+            .stdin(Stdio::null())
+            .output()?;
+        ensure!(
+            seeded.status.success(),
+            "could not populate the approved private npm cache: {}",
+            String::from_utf8_lossy(&seeded.stderr)
+        );
+    }
+    Ok(())
+}
+
+fn passthrough(program: &str, args: &[String]) -> Result<u8> {
+    let home = config::Config::home()?;
+    let program = executable(program, &home)?;
+    let status = Command::new(program)
+        .args(args)
+        .stdin(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .status()?;
+    Ok(code(status))
+}
+
+/// Dispatch a guarded npm command.
+pub fn run_npm(cli: &Cli, args: &[String]) -> Result<u8> {
+    if std::env::var("ZOLI_WRAPPED").is_ok_and(|value| value == "1") {
+        return passthrough("npm", args);
+    }
+    match args.first().map(String::as_str) {
+        Some("ci") => run_ci(cli, args),
+        Some("install" | "i") => super::ad_hoc::install(cli, &args[1..]),
+        _ => Err(Usage(
+            "guarded npm supports `ci` and `install` only; other commands, managers and overrides are refused"
+                .into(),
+        )
+        .into()),
+    }
+}
+
+/// Dispatch a guarded npx invocation.
+pub fn run_npx(cli: &Cli, args: &[String]) -> Result<u8> {
+    if std::env::var("ZOLI_WRAPPED").is_ok_and(|value| value == "1") {
+        return passthrough("npx", args);
+    }
+    super::ad_hoc::npx(cli, args)
+}
+
+fn run_ci(cli: &Cli, args: &[String]) -> Result<u8> {
     if cli.json {
         return Err(Usage(
             "wrap preserves npm stdout; use audit.jsonl for structured reports instead of --json"
@@ -258,19 +372,26 @@ pub fn run(cli: &Cli, args: &[String]) -> Result<u8> {
     let private = tempfile::Builder::new().prefix("zoli-npm-ci-").tempdir()?;
     let quarantine = private.path().join("quarantine");
     std::fs::create_dir(&quarantine)?;
-    let mut report = assess(cli, &lockfile, None, Some(&quarantine), Some(hours))?;
+    let mut report = assess(
+        cli,
+        &lockfile,
+        None,
+        Some(&quarantine),
+        Some(hours),
+        "npm_ci_assessment",
+    )?;
     output::guard_report(&report, &home)?;
     if report.decision.exit_code != 0 {
         return Ok(report.decision.exit_code);
     }
     inputs.verify(&project, &home)?;
-    let program = executable("npm")?;
+    let program = executable("npm", &home)?;
     let cache = private.path().join("cache");
     let user = private.path().join("user.npmrc");
     let global = private.path().join("global.npmrc");
     std::fs::write(&user, b"")?;
     std::fs::write(&global, b"")?;
-    let version = npm_command(&program, private.path(), &cache, &user, &global)
+    let version = npm_command(&program, private.path(), &cache, &user, &global, false)
         .arg("--version")
         .output()?;
     ensure!(
@@ -282,37 +403,20 @@ pub fn run(cli: &Cli, args: &[String]) -> Result<u8> {
     );
     // Only approved bytes reach npm. Seeding runs outside the project with
     // scripts disabled; no user cache, npmrc or registry access is inherited.
-    for node in &report.packages {
-        let local = node
-            .local_analysis
-            .as_ref()
-            .context("approved artifact report missing")?;
-        let file = quarantine.join(format!("{}.tgz", local.artifact_sha256));
-        let bytes = read_bounded(&file, config.analysis.max_artifact_bytes)?;
-        ensure!(
-            sha256(&bytes) == local.artifact_sha256,
-            "quarantined artifact changed"
-        );
-        let seeded = npm_command(&program, private.path(), &cache, &user, &global)
-            .args([
-                "cache",
-                "add",
-                "--offline",
-                "--ignore-scripts",
-                "--audit=false",
-                "--fund=false",
-            ])
-            .arg(&file)
-            .stdin(Stdio::null())
-            .output()?;
-        ensure!(
-            seeded.status.success(),
-            "could not populate the approved private npm cache: {}",
-            String::from_utf8_lossy(&seeded.stderr)
-        );
-    }
+    seed_cache(
+        Seed {
+            program: &program,
+            workspace: private.path(),
+            cache: &cache,
+            user: &user,
+            global: &global,
+            quarantine: &quarantine,
+            max_bytes: config.analysis.max_artifact_bytes,
+        },
+        &report,
+    )?;
     inputs.verify(&project, &home)?;
-    refresh(cli, &config, &home, &mut report, hours)?;
+    refresh(cli, &config, &home, &mut report, hours, "npm_ci_release")?;
     output::guard_report(&report, &home)?;
     if report.decision.exit_code != 0 {
         return Ok(report.decision.exit_code);
@@ -324,7 +428,7 @@ pub fn run(cli: &Cli, args: &[String]) -> Result<u8> {
         "zoli: approved {} dependencies; npm ci uses an isolated offline cache (minimum age {hours}h)",
         report.packages.len()
     );
-    let status = npm_command(&program, &project, &cache, &user, &global)
+    let status = npm_command(&program, &project, &cache, &user, &global, true)
         .args(args)
         .args([
             "--offline",

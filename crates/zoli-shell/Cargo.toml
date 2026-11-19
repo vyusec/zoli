@@ -9,6 +9,8 @@ publish.workspace = true
 
 [dependencies]
 zoli-pms.workspace = true
+anyhow.workspace = true
+tempfile.workspace = true
 
 [lints]
 workspace = true

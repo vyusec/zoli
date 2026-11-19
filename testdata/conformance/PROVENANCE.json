@@ -1,20 +1,21 @@
 {
   "schema": 1,
-  "generator_sha256": "23f8bd0b2a3568b60e7411ddd28e1b8a26ac49864fd0745d778b18efbbf442fc",
+  "generator_sha256": "fe137746e9b693ab857f4fa937162afb15f5a4eb70e0fb4f6fe2a5a01d5fa344",
   "generator_files": {
     "tools/conformance-gen/cache.go": "10540e417454a1adaf1a0fe2845eaeb5e83fae86e1f63e3989e388f009c98310",
-    "tools/conformance-gen/feeds.go": "4765c728409da98eef137f0b7641e96bd3aae1483b118dc46bcab20b43d61d9f",
-    "tools/conformance-gen/main.go": "23f8bd0b2a3568b60e7411ddd28e1b8a26ac49864fd0745d778b18efbbf442fc",
+    "tools/conformance-gen/feeds.go": "9ffe50cef598edfbc72d43d2b1173bf357851e9c09a1c31b92577a9e483ac8bc",
+    "tools/conformance-gen/main.go": "fe137746e9b693ab857f4fa937162afb15f5a4eb70e0fb4f6fe2a5a01d5fa344",
     "tools/conformance-gen/matrix.go": "cda4a374ef5f585a8552ab0c2e5a98dc9da36c7dac1f13f0e691f206a0ab4f83",
-    "tools/conformance-gen/pypi.go": "144b7f8ddcb46904e1861cee5fd053f956086c646b82ed606d81995b7bf28e8f",
+    "tools/conformance-gen/pypi.go": "3884fda92a889ee7229ec72546dd626b3d1557a93126c563c8ca710e7bfd59d9",
+    "tools/conformance-gen/seeded.go": "d7c2c5075b90515fd50a6048930a1867677687f15c513e40ad18e51b36b5614f",
     "tools/conformance-client/transport.go": "9b557a07029add242d85164bf92e27816c7add82d73ada6a490efa5be6a1ee11"
   },
-  "wrapper_sha256": "382b570d3e75aacf10f06f180b3411000aba429682c83c54ad27d6ac9359c8a7",
+  "wrapper_sha256": "b6cb95e3a7a43a90bc72a846e513aba7db6bc0fda9cf1a633f2a920a7f687b4f",
   "intel_feed_commit": null,
-  "source_tree_sha256": "2fc65e296eef46e32464cdf7d1465ed70b22d981c3cb34d365d539bed35fb429",
+  "source_tree_sha256": "dd128da94e34b51cd0195e451fdd47f5666404580ec5b0ec553373aa87f6fc89",
   "source_tree_scope": "All .go, .sql (go:embed), go.mod, go.sum, LICENSE and NOTICE files, excluding .git, bin, target and node_modules; before generator overlay",
   "go_version": "go version go1.26.10-X:nodwarf5 linux/amd64",
-  "generated_at": "2026-10-29T19:54:22.709004+00:00",
+  "generated_at": "2026-10-30T13:55:32.303476+00:00",
   "families": [
     "wire-strings.tsv",
     "record-encoding.json",
@@ -22,12 +23,14 @@
     "queries.json",
     "feed-cases.json",
     "npm-matrix.json",
-    "pypi-matrix.json"
+    "pypi-matrix.json",
+    "pypi-constraints.json",
+    "pypi-seeded.json.gz"
   ],
   "limitations": [
     "A null intel_feed_commit means the source has no Git metadata; the inventoried build inputs identify this local baseline.",
     "Query fixtures share an explicit clock and cover selected freshness boundaries; the corpus is finite.",
-    "PyPI comparison and exact/event queries are covered; constraint-string matching and pip installation remain separate gates.",
+    "PyPI comparisons, constraints and exact/event queries follow the pinned Go implementation, not pip resolution; bounded resource refusals are tested separately.",
     "Live-delivery and resource-ceiling tests are separate gates; fixtures do not demonstrate deployed service readiness."
   ],
   "source_files": [
@@ -162,6 +165,10 @@
     {
       "path": "internal/model/model_test.go",
       "sha256": "269ed363f8415aa12ebe9cb3356136a5b9c729caccf60268e603e3ad4a7ebcdf"
+    },
+    {
+      "path": "internal/model/pypi_regression_test.go",
+      "sha256": "0373ccf15616ae57fe4913c3a3706d8efeac21010e5e727edbb7c06fd492cb8a"
     },
     {
       "path": "internal/netfetch/client.go",
@@ -364,9 +371,11 @@
     "wire-strings.tsv": "506294dfb9708431633fdda34d7c8e7bf326ffae0f1c0e9f426b38ce6abea1e5",
     "record-encoding.json": "f305ce218d6b49a6d3e3816f7651d6af7c709347f53b6c74775a5187c5a3f02b",
     "identities.json": "d7b13cc1e2a0fe868fbf9cb3cd5793d4e10970ca58dc72f51e0e5e005359be6c",
-    "queries.json": "c371c8239a8f32451ec3d07642bcfd2f9463304719ce5736e4f6747efd3554a1",
-    "feed-cases.json": "7c9eb89c69d6026d72d131d55d879f4653955b5d6ea80657e9954ba1399a7cb6",
+    "queries.json": "d53f40ec39f8a0e7347d9082b239c82630b50cc42e0a9da807246fed43902af8",
+    "feed-cases.json": "2af4c114d4a21e6c00e8b3e4ec67812cb6e40c1f009f65135e97df9eb34537cf",
     "npm-matrix.json": "e34ca86397866aeb9e0b46a57951d60ea314018bcb8c23bcb7a08635cbd16600",
-    "pypi-matrix.json": "dbd7018ab22904d7e10c989e0d38af7923e8dd01e986379d24096b5cb70a1bea"
+    "pypi-matrix.json": "dbd7018ab22904d7e10c989e0d38af7923e8dd01e986379d24096b5cb70a1bea",
+    "pypi-constraints.json": "e9aead0db0e6f20ae36a1252dd01ff8c4860200e536115591c2fe1e6118a9667",
+    "pypi-seeded.json.gz": "5c18ad21fa0fbb6964d562cc9b20d8f53cdadfbffa7c7a162c4f5b145c2a2ca2"
   }
 }

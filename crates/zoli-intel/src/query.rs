@@ -24,11 +24,12 @@ fn match_range(q: &Identity, range: &Range) -> Result<bool> {
         "invalid query version"
     );
     if range.kind == "constraint" {
-        ensure!(
-            q.ecosystem == "npm",
-            "PyPI constraint-string matching is not implemented"
-        );
-        return npm::matches(&range.constraint, &q.version)
+        let matches = if q.ecosystem == "npm" {
+            npm::matches
+        } else {
+            pypi::matches
+        };
+        return matches(&range.constraint, &q.version)
             .map_err(|_| anyhow::anyhow!("unsupported version constraint: {}", range.constraint));
     }
     ensure!(
@@ -143,7 +144,7 @@ pub fn match_affected(q: &Identity, a: &Affected) -> (String, Vec<String>) {
     (certainty.into(), reasons)
 }
 /// Produce the Go query response for the same normalized records and clock.
-/// PyPI currently supports exact identities and OSV event ranges only.
+/// Supports npm/PyPI exact versions, constraint strings and OSV event ranges.
 pub fn query(
     mut q: Identity,
     manifest: &Manifest,
@@ -189,19 +190,43 @@ pub fn query(
         if record.status != "published" || record.withdrawn_at.is_some() {
             continue;
         }
-        // Do not turn a supported Go constraint into a different Rust verdict.
-        // Until parity is implemented, refuse this query before emitting one.
-        ensure!(
-            q.ecosystem != "PyPI"
-                || !record
-                    .affected
+        // Syntax failures use the Go uncertain-match contract below. Resource
+        // exhaustion is different: refuse the entire query, including when
+        // another affected entry has an exact match, instead of releasing a
+        // partial verdict. Inputs and credentials are absent from limit errors.
+        if q.ecosystem == "PyPI" {
+            for affected in record
+                .affected
+                .iter()
+                .flatten()
+                .filter(|a| a.package.ecosystem == q.ecosystem && a.package.name == q.name)
+            {
+                for range in affected
+                    .ranges
                     .iter()
                     .flatten()
-                    .any(|a| a.package.ecosystem == q.ecosystem
-                        && a.package.name == q.name
-                        && a.ranges.iter().flatten().any(|r| r.kind == "constraint")),
-            "PyPI constraint-string matching is not implemented; required query refused"
-        );
+                    .filter(|r| r.kind == "constraint")
+                {
+                    if let Err(error) = pypi::matches(&range.constraint, &q.version)
+                        && pypi::is_resource_limit(&error)
+                    {
+                        return Err(error);
+                    }
+                }
+                for version in affected
+                    .versions
+                    .iter()
+                    .flatten()
+                    .chain(std::iter::once(&affected.package.version))
+                {
+                    if let Err(error) = pypi::compare(&q.version, version)
+                        && pypi::is_resource_limit(&error)
+                    {
+                        return Err(error);
+                    }
+                }
+            }
+        }
         ensure!(
             q.ecosystem != "PyPI"
                 || !record.affected.iter().flatten().any(|a| {

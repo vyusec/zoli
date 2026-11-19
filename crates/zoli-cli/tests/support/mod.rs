@@ -73,6 +73,15 @@ pub fn home(records: Vec<Record>) -> tempfile::TempDir {
         serde_json::to_vec(&config).unwrap(),
     )
     .unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(
+            home.path().join("config.json"),
+            std::fs::Permissions::from_mode(0o600),
+        )
+        .unwrap();
+    }
     home
 }
 pub fn publish(home: &Path, records: Vec<Record>, age_seconds: i64, source_error: Option<&str>) {
@@ -84,6 +93,16 @@ pub fn publish_with_sequence(
     age_seconds: i64,
     source_error: Option<&str>,
     sequence: i64,
+) {
+    publish_adjusted(home, records, age_seconds, source_error, sequence, |_| {});
+}
+pub fn publish_adjusted(
+    home: &Path,
+    records: Vec<Record>,
+    age_seconds: i64,
+    source_error: Option<&str>,
+    sequence: i64,
+    adjust: impl FnOnce(&mut Manifest),
 ) {
     let signing = SigningKey::from_bytes(&[7; 32]);
     let key = signing.verifying_key().to_bytes();
@@ -101,7 +120,7 @@ pub fn publish_with_sequence(
         .map(|r| format!("{}\n", r.go_json(Mode::Marshal).unwrap()))
         .collect::<String>();
     let compressed = gzip(rows.as_bytes());
-    let manifest = Manifest {
+    let mut manifest = Manifest {
         schema_version: "1.0".into(),
         sequence,
         generated_at: now.clone(),
@@ -134,6 +153,7 @@ pub fn publish_with_sequence(
         }]),
         ..Default::default()
     };
+    adjust(&mut manifest);
     let raw = serde_json::to_string(&manifest).unwrap();
     let signature = STANDARD.encode(signing.sign(raw.as_bytes()).to_bytes());
     let envelope = Envelope {

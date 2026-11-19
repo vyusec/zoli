@@ -2,6 +2,80 @@
 
 Each entry records what was actually run, the results, and what the evidence does not show.
 
+## Phase 2 completion — 20 November 2026
+
+Phase 2's supported npm guard was completed and validated locally on Linux x86_64. The environment was Rust/Cargo 1.98.0, Node v22.23.1, npm 10.9.8 and Docker 29.9.1. Heavy commands ran sequentially through the approved 50%-of-one-core cgroup quota with one compiler/test worker and low scheduling priority.
+
+| Check | Executed result |
+| --- | --- |
+| `make ci` | Passed formatting, generated fixture provenance, Clippy `-D warnings`, cargo-deny 0.20.2, locked build and the full workspace test suite |
+| Workspace tests | **172 passed, 0 failed, 1 ignored** (the manual timing baseline) using `--test-threads=1` |
+| Locked npm guard | **10 passed**, including the original nine and a new bundled-dependency age-inheritance case |
+| Ad-hoc npm/npx | **9 passed**: metadata-only resolution, exact direct spec, approval then offline install, malicious/young refusal without project mutation, npx execution/exit status, warm-cache independence, nested-shim passthrough, unapproved scoped routes and option/source refusals |
+| Shell and doctor | **7 `zoli-shell` unit tests and 5 process tests passed**: idempotent bash install, backups, marker safety, fish conf.d, CI shims, `$GITHUB_PATH`, healthy/stale/missing-config doctor behavior |
+| CLI surface | **6 passed**: unsupported managers still exit 3 without starting them; an unconfigured guarded npm install exits before npm starts |
+| `make npm-guard-container` | **19 passed** (10 guard + 9 ad-hoc/npx) as uid 65534, no external network, read-only root, dropped capabilities, no-new-privileges, bounded memory/pids and a private writable tmpfs |
+
+### Implemented behavior
+
+- `zoli wrap npm -- ci` retains the locked preflight, 24-hour age floor, quarantine, private cache, final input/feed reload and preserved npm output/status.
+- `zoli wrap npm -- install [spec…]` creates a temporary manifest, resolves metadata with `--package-lock-only --ignore-scripts`, validates every configured registry route, assesses the exact resolved tree, writes the approved `package.json`/`package-lock.json`, then runs npm offline from an invocation-private cache. Resolution metadata and approved artifacts use different temporary caches. Unsupported sources, workspaces, `npm-shrinkwrap.json` edits and operational overrides refuse.
+- `zoli wrap npx -- <spec> [args]` follows the same resolution/assessment/offline-install path and executes only the package's declared executable. Exit status and stdio are preserved. Nested shim calls pass through when `ZOLI_WRAPPED=1`, matching the documented nested-invocation behavior.
+- Bundled dependencies are inspected inside the containing archive and inherit its registry publication time and integrity; they are not fetched or age-checked as independent registry artifacts. The report records `age_evidence` as `registry_publication` or `bundling_parent:<path>`.
+- `zoli shims install|uninstall --shell bash|zsh|fish` edits only a marked block or a dedicated fish file, backs up before changes and refuses unbalanced markers. `--ci` writes one executable shim per manager and can append the directory to `$GITHUB_PATH`.
+- `zoli doctor` reports feed verification/freshness, configuration and permissions, audit state, npm 10, shim/PATH state and the current npm project inventory; blocking findings exit 10.
+
+### Limits of this evidence
+
+No healthy deployed feed was available: the configured quick-tunnel hostname did not resolve on 20 November. The live Rust/Go/hosted comparison and healthy-source acceptance therefore remain open. Hosted CI was not observed before this entry and is not claimed. This pass did not test macOS, `serve`, pnpm/yarn/bun, workspaces, source distributions, representative real-world projects, runtime sandboxing or nested installer protection. Static fixture success is not malware-detection accuracy evidence.
+
+## Expanded Python testing — 30 October 2026
+
+The [detailed report](phase3-test-report.md) maps the approved low/high-level plan to test files, fixes, independent standards differences and remaining limits. This pass adds **51 named Rust tests**, **four top-level Go tests** and **100,000 fixed-seed comparison/constraint cases**.
+
+`make ci` passed with **145 tests passing, zero failures, one intentionally ignored manual timing test**. Formatting, nine-family provenance verification, workspace Clippy with `-D warnings`, dependency policy and locked build all passed. The suite includes all nine real npm guard regressions and the new Python CLI/audit/concurrency tests. Focused test runs are included in this total, not additional passes to add again.
+
+The new corpus contains 25,000 seeded comparisons and 75,000 seeded constraints (seed `0x5a4f4c493033`), plus 29,973 explicit constraint cases, 6,084 explicit comparisons, 66 exact-response queries and 47 signed feed/update cases. Five new signed PyPI snapshots exercise Go publication through Rust cache/query/policy/CLI and durable audit. The first seeded run found five Rust/Go disagreements; correcting point-interval endpoint storage removes all five. Requirements regressions also fixed silently ignored encoding directives and Unicode whitespace normalization.
+
+`make cache-conformance INTEL_FEED=../intel-feed` passed: all nine fixture families and provenance reproduce byte-for-byte, and Go `client.Load` authenticates **21 Rust-written caches**. Local Markdown validation checked 107 links/anchors in 12 changed files.
+
+`python3 tools/test-phase3-mutations.py --output /tmp/zoli-expanded-tests-20261030/mutations` caught all four injected faults by assertion failures. The final runner uses separate temporary source and build directories, copies only external dependency artifacts, and verifies that the workspace CLI binary's SHA-256 is unchanged. The initial shared-target runner contaminated cached CLI output; the full suite detected it, affected workspace artifacts were cleaned/rebuilt, and the final `make ci` above and isolated mutation rerun both passed. Temporary mutation directories were removed. Source files were never mutated by these controls.
+
+The feed's `go test -p=1 -count=1 -json ./internal/model ./internal/api ./pkg/client` passed **23 top-level tests, 47 including subtests, no failures or skips**. Existing 82 inventoried Go/build inputs are unchanged; one new model test file is added. No feed runtime/schema/deployment changed, so database/race/container suites were not repeated.
+
+Independent PyPA `packaging` 25.0 checks assert eight representative differences and report 2,538 differing comparisons out of 31,084 and 30,227 differing constraint results out of 104,973. These counts include syntax/limit/prerelease-policy differences and do not count distinct bugs. In particular, repeated exclusions can restore excluded versions in the pinned Go library; that remains an explicit reference defect, not a standards-compliance success.
+
+All heavy work ran sequentially through `systemd-run --user --scope --quiet -p CPUQuota=50% -p CPUWeight=10 nice -n 15`, with `CARGO_BUILD_JOBS=1 RUST_TEST_THREADS=1 GOMAXPROCS=1 MAKEFLAGS=-j1`. Tools: Rust/Cargo 1.98.0, Go 1.26.10-X:nodwarf5, Node 22.23.1, npm 10.9.8, packaging 25.0. Logs: `/tmp/zoli-expanded-tests-20261030/`. No hosted CI, push, live service acceptance, wheel inspection or Python installation protection is claimed.
+
+## Phase 3 matching and input milestone — 30 October 2026
+
+This closes milestone 1 of the [five-part Phase 3 acceptance checklist](phase3-python.md#acceptance-milestones): **20% of that checklist**, not 20% of estimated effort or a claim of Python installation protection. It adds Go-compatible PyPI constraint matching, a hardened pinned-input contract, and explicit bounds/refusal tests. Python wheel inspection, dependency resolution, pip enforcement and the other adapters remain open.
+
+All heavy commands ran sequentially through `systemd-run --user --scope --quiet -p CPUQuota=50% -p CPUWeight=10 nice -n 15`, with `CARGO_BUILD_JOBS=1`, `RUST_TEST_THREADS=1`, `GOMAXPROCS=1` and `MAKEFLAGS=-j1` for the final quality gate. No Docker or Go database/race suite was repeated; the npm guard implementation and feed service code are unchanged.
+
+| Check | Executed result |
+| --- | --- |
+| `make ci` | Passed rustfmt, eight-family provenance verification, workspace Clippy with `-D warnings`, cargo-deny, locked workspace build and **94 passing tests**; zero failures, one manual timing test intentionally ignored |
+| Go-generated PyPI oracle | **29,488 constraint/version cases**, including exclusions, two/three-way intersections, wildcards, epochs, local/post/dev/prerelease behavior and malformed syntax; all results/error categories agree |
+| Full query corpus | **66 byte-exact responses** against `api.QueryAt`, including 30 PyPI cases; existing npm encoding/matching/cache cases also pass |
+| `cargo test -p zoli-intel --tests --locked` | 22 tests pass, including 6,084 concrete comparisons, three new resource-limit tests, signed snapshot/delta, cache recovery/concurrency, JSON and wire regressions |
+| `cargo test -p zoli-pms --offline` | 16 tests pass, including five new input regression tests plus existing requirements and npm inventory checks; lockfile change adds the already-resolved regex dependency to this crate only |
+| `cargo test -p zoli-cli --test pypi --locked` | Six process tests pass: constraints, policy/CI behavior, artifact scope/withdrawal, resource refusal, exact audit/report agreement and audit failure |
+| `cargo test -p zoli-cli --test assessment --test cli --test npm_guard --locked` | 22 tests pass, including all nine real npm guard cases and existing assessment/CLI behavior |
+| `cargo test -p zoli-policy --test assessment --locked` | Five policy regressions pass |
+| Targeted Clippy | `cargo clippy -p zoli-intel -p zoli-pms -p zoli-cli -p zoli-policy --all-targets --locked -- -D warnings` passes |
+| Oracle reproduction | `python3 tools/generate-conformance.py --intel-feed ../intel-feed --check` reproduces all eight families and provenance exactly; `--verify` passes |
+
+The selected runs contain **71 distinct passing tests**; these are included in the final workspace gate, not additional tests to add to its count. The conformance target was rerun after expanding the generated matrix from two-way to three-way intersections. Initial mismatches exposed Go conjunction syntax and overflow-boundary reconstruction; the port follows the reference. A manual CLI expectation for `<2!0` was corrected against the Go oracle, and the epoch behavior is documented as a compatibility limitation.
+
+Hardening checks cover exact byte/component/term ceilings, oversized work after an otherwise matching affected entry, malformed Unicode/control characters, duplicate normalized names, invalid hashes/options/includes, comments and line continuations, redacted diagnostics, invalid UTF-8 and regular-file requirements. `complete_pins()` refuses partial input inventories. This accessor is not proof of transitive dependency completeness and does not authorize an installer. Hostile concurrent filesystem mutation needs the future installer’s input snapshot/recheck contract.
+
+Code responsibilities are separated between concrete comparison, constraint intervals, feed query/error propagation and strict pip input grammar. The [developer guide and reference differences](phase3-python.md#matching-contract-and-developer-guide) explain why the pinned Go behavior must not be presented as full PEP 440/pip equivalence. Finite fixture coverage does not establish exhaustive semantic proof or detection accuracy.
+
+Environment: Linux x86_64; Rust 1.98.0 (`88d9e12ae`), Cargo 1.98.0 (`797e8a9bc`), Go 1.26.10-X:nodwarf5, Node 22.23.1, npm 10.9.8. Logs and the machine-readable count are under `/tmp/zoli-phase3-milestone1-20261030`, including `ci.log`, `conformance-final.log`, `requirements.log`, `cli-pypi-final.log`, `npm-regressions.log`, `policy-regressions.log`, `clippy.log`, `oracle-reproduction.log` and `validation-summary.json`.
+
+No new hosted CI, deployment, real pip execution, wheel analysis or Ratatui implementation is claimed by this milestone.
+
 ## Phase 3 kickoff — 30 October 2026
 
 The user authorized starting Phase 3 and requested low CPU usage. This supersedes the earlier development hold, while healthy deployment and remaining Phase 2 acceptance gates stay open. The first slice adds PyPI feed-only checks, concrete version comparison and a strict nonexecuting pip requirements reader. Python installation is not enabled.

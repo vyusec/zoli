@@ -7279,5 +7279,2458 @@
       "freshness": "current"
     },
     "marshal_json_hex": "7b22737461747573223a22696e73756666696369656e745f696e666f726d6174696f6e222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2273636f7065223a22756e6b6e6f776e227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a22756e6365727461696e227d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-range",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.2",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "68425c36cfcc81c177c7909f49bc78bbb85e52b332bbce679806a478d5327af0",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1.0,\u003c2"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "known_match",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "\u003e=1.0,\u003c2"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "range"
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226b6e6f776e5f6d61746368222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a225c75303033653d312e302c5c753030336332227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a2272616e6765227d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-upper",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "2",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "68425c36cfcc81c177c7909f49bc78bbb85e52b332bbce679806a478d5327af0",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1.0,\u003c2"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "no_known_match",
+      "matches": [],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226e6f5f6b6e6f776e5f6d61746368222c226d617463686573223a5b5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-exclusion",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.5",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "5b292e72eb5c2ec9760a8e29535a339bac216e8d1891fd380bc3df74631d7e78",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1.0,\u003c2,!=1.5"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "no_known_match",
+      "matches": [],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226e6f5f6b6e6f776e5f6d61746368222c226d617463686573223a5b5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-wildcard",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.0.7",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "3993862691ecdbe81a285094b1ca4c348414223ff4cbeea3dd37b6edf1df7a77",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "==1.0.*"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "known_match",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "==1.0.*"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "range"
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226b6e6f776e5f6d61746368222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a223d3d312e302e2a227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a2272616e6765227d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-compatible",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.1",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "cf78470801356651a4915cfbf41ee47aa57f395a5e84b513dd0d8f1c798072d6",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "~=1.0.1"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "no_known_match",
+      "matches": [],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226e6f5f6b6e6f776e5f6d61746368222c226d617463686573223a5b5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-prerelease",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.1a1",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "4acc384e2a9df957670c1bd684271b0f9b618a1edd83cc748eeb4e43b16bf027",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1.0rc1,\u003c2"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "known_match",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "\u003e=1.0rc1,\u003c2"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "range"
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226b6e6f776e5f6d61746368222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a225c75303033653d312e307263312c5c753030336332227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a2272616e6765227d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-prerelease-excluded",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.1a1",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "e256dbc2bf8fb0087e6cf8dac9e058e84f8d9d408668e2f551d495689c70d4b3",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e1.0rc1,\u003c2"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "no_known_match",
+      "matches": [],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226e6f5f6b6e6f776e5f6d61746368222c226d617463686573223a5b5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-epoch",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1!2.0",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "5c90e1a39f5395f52eb4a9f2664989dc0011081009feac159f074234f3bce8be",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1!1.0,\u003c2!0"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "no_known_match",
+      "matches": [],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226e6f5f6b6e6f776e5f6d61746368222c226d617463686573223a5b5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-local-point",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.0+abc",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "b4cfca66bc0149d01ab040075fde308433d2c81ef5cad8f44caf876e254870cf",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "==1.0+abc"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "known_match",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "==1.0+abc"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "range"
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226b6e6f776e5f6d61746368222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a223d3d312e302b616263227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a2272616e6765227d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-local-vector",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.0+abc",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "68425c36cfcc81c177c7909f49bc78bbb85e52b332bbce679806a478d5327af0",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1.0,\u003c2"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "no_known_match",
+      "matches": [],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226e6f5f6b6e6f776e5f6d61746368222c226d617463686573223a5b5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-invalid",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.0",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "0c8a38daac974476dc9141ad5ee5788bc0e733b5564b8049c40b3306314daf33",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "===1.0"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "insufficient_information",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "===1.0"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "uncertain",
+          "reasons": [
+            "unsupported version constraint: ===1.0"
+          ]
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a22696e73756666696369656e745f696e666f726d6174696f6e222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a223d3d3d312e30227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a22756e6365727461696e222c22726561736f6e73223a5b22756e737570706f727465642076657273696f6e20636f6e73747261696e743a203d3d3d312e30225d7d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-invalid-version",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "bad",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "753dbb554a557e172249c36dd8b5c545e4e6b1edd17e2119d3d84857a38b1113",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "insufficient_information",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "\u003e=1"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "uncertain",
+          "reasons": [
+            "invalid query version"
+          ]
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a22696e73756666696369656e745f696e666f726d6174696f6e222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a225c75303033653d31227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a22756e6365727461696e222c22726561736f6e73223a5b22696e76616c69642071756572792076657273696f6e225d7d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-missing-version",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "753dbb554a557e172249c36dd8b5c545e4e6b1edd17e2119d3d84857a38b1113",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "insufficient_information",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "\u003e=1"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "uncertain",
+          "reasons": [
+            "missing version"
+          ]
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a22696e73756666696369656e745f696e666f726d6174696f6e222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a225c75303033653d31227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a22756e6365727461696e222c22726561736f6e73223a5b226d697373696e672076657273696f6e225d7d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-point-intersection",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "5552113996bc95cb748f36593d646b58eb2fb59577493591db2477f10160f8de",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e1,\u003c=1"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "known_match",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "\u003e1,\u003c=1"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "range"
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226b6e6f776e5f6d61746368222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a225c7530303365312c5c75303033633d31227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a2272616e6765227d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
+  },
+  {
+    "name": "pypi-constraint-noncomma",
+    "query": {
+      "ecosystem": "PyPI",
+      "name": "some-package",
+      "version": "1.5",
+      "registry": "https://pypi.org"
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "record_count": 1,
+      "records_sha256": "9da55f91e0f97bb28ca63c8746aee42f60ecbfb1507c26079adcdb3b0d921664",
+      "rule_set_sha256": "",
+      "coverage": [
+        {
+          "ecosystem": "PyPI",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "npm",
+          "mode": "reports_and_selective_analysis",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "Release feeds may omit events; gaps are reported",
+            "Analysis is bounded by configured budgets"
+          ]
+        },
+        {
+          "ecosystem": "Cargo",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Maven",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete"
+          ]
+        },
+        {
+          "ecosystem": "Conda",
+          "mode": "reports_only",
+          "limitations": [
+            "No known match is not proof of safety",
+            "Public reports are incomplete",
+            "No enabled registry analysis; exact channel/build selectors required",
+            "Version ranges are preserved but not evaluated"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "name": "fixture",
+          "last_success": "2026-10-18T00:00:00Z",
+          "coverage": "complete"
+        }
+      ],
+      "files": null,
+      "original_data_license": "",
+      "imported_data_license": ""
+    },
+    "records": [
+      {
+        "schema_version": "1.0",
+        "id": "ZOLI-000000000000000000000001",
+        "classification": "malicious",
+        "status": "published",
+        "summary": "Synthetic conformance record",
+        "affected": [
+          {
+            "package": {
+              "ecosystem": "PyPI",
+              "name": "some-package",
+              "registry": "https://pypi.org"
+            },
+            "ranges": [
+              {
+                "type": "constraint",
+                "constraint": "\u003e=1\u003c2"
+              }
+            ],
+            "scope": "versions"
+          }
+        ],
+        "evidence": [
+          {
+            "explanation": "Synthetic evidence only"
+          }
+        ],
+        "sources": [
+          {
+            "source": "fixture",
+            "id": "fixture-1",
+            "url": "https://example.invalid/report",
+            "license": "Apache-2.0",
+            "revision": "1",
+            "retrieved_at": "2000-01-02T03:04:05Z"
+          }
+        ],
+        "published_at": "0001-01-01T00:00:00Z",
+        "modified_at": "2000-01-02T03:04:05Z",
+        "revision": 1
+      }
+    ],
+    "expected": {
+      "status": "known_match",
+      "matches": [
+        {
+          "record": {
+            "schema_version": "1.0",
+            "id": "ZOLI-000000000000000000000001",
+            "classification": "malicious",
+            "status": "published",
+            "summary": "Synthetic conformance record",
+            "affected": [
+              {
+                "package": {
+                  "ecosystem": "PyPI",
+                  "name": "some-package",
+                  "registry": "https://pypi.org"
+                },
+                "ranges": [
+                  {
+                    "type": "constraint",
+                    "constraint": "\u003e=1\u003c2"
+                  }
+                ],
+                "scope": "versions"
+              }
+            ],
+            "evidence": [
+              {
+                "explanation": "Synthetic evidence only"
+              }
+            ],
+            "sources": [
+              {
+                "source": "fixture",
+                "id": "fixture-1",
+                "url": "https://example.invalid/report",
+                "license": "Apache-2.0",
+                "revision": "1",
+                "retrieved_at": "2000-01-02T03:04:05Z"
+              }
+            ],
+            "published_at": "0001-01-01T00:00:00Z",
+            "modified_at": "2000-01-02T03:04:05Z",
+            "revision": 1
+          },
+          "certainty": "range"
+        }
+      ],
+      "sequence": 42,
+      "generated_at": "2026-10-18T00:00:00Z",
+      "coverage": {
+        "ecosystem": "PyPI",
+        "mode": "reports_and_selective_analysis",
+        "limitations": [
+          "No known match is not proof of safety",
+          "Public reports are incomplete",
+          "Release feeds may omit events; gaps are reported",
+          "Analysis is bounded by configured budgets"
+        ]
+      },
+      "freshness": "current"
+    },
+    "marshal_json_hex": "7b22737461747573223a226b6e6f776e5f6d61746368222c226d617463686573223a5b7b227265636f7264223a7b22736368656d615f76657273696f6e223a22312e30222c226964223a225a4f4c492d303030303030303030303030303030303030303030303031222c22636c617373696669636174696f6e223a226d616c6963696f7573222c22737461747573223a227075626c6973686564222c2273756d6d617279223a2253796e74686574696320636f6e666f726d616e6365207265636f7264222c226166666563746564223a5b7b227061636b616765223a7b2265636f73797374656d223a2250795049222c226e616d65223a22736f6d652d7061636b616765222c227265676973747279223a2268747470733a2f2f707970692e6f7267227d2c2272616e676573223a5b7b2274797065223a22636f6e73747261696e74222c22636f6e73747261696e74223a225c75303033653d315c753030336332227d5d2c2273636f7065223a2276657273696f6e73227d5d2c2265766964656e6365223a5b7b226578706c616e6174696f6e223a2253796e7468657469632065766964656e6365206f6e6c79227d5d2c22736f7572636573223a5b7b22736f75726365223a2266697874757265222c226964223a22666978747572652d31222c2275726c223a2268747470733a2f2f6578616d706c652e696e76616c69642f7265706f7274222c226c6963656e7365223a224170616368652d322e30222c227265766973696f6e223a2231222c227265747269657665645f6174223a22323030302d30312d30325430333a30343a30355a227d5d2c227075626c69736865645f6174223a22303030312d30312d30315430303a30303a30305a222c226d6f6469666965645f6174223a22323030302d30312d30325430333a30343a30355a222c227265766973696f6e223a317d2c226365727461696e7479223a2272616e6765227d5d2c2273657175656e6365223a34322c2267656e6572617465645f6174223a22323032362d31302d31385430303a30303a30305a222c22636f766572616765223a7b2265636f73797374656d223a2250795049222c226d6f6465223a227265706f7274735f616e645f73656c6563746976655f616e616c79736973222c226c696d69746174696f6e73223a5b224e6f206b6e6f776e206d61746368206973206e6f742070726f6f66206f6620736166657479222c225075626c6963207265706f7274732061726520696e636f6d706c657465222c2252656c65617365206665656473206d6179206f6d6974206576656e74733b206761707320617265207265706f72746564222c22416e616c7973697320697320626f756e64656420627920636f6e666967757265642062756467657473225d7d2c2266726573686e657373223a2263757272656e74227d"
   }
 ]

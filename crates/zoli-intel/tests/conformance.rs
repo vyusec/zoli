@@ -148,6 +148,44 @@ fn pypi_concrete_comparison_matches_go() {
 }
 
 #[test]
+fn pypi_constraints_match_go() {
+    let mut differences = vec![];
+    let mut seen = std::collections::BTreeSet::new();
+    let mut failures = 0;
+    let cases = corpus("pypi-constraints.json");
+    assert!(
+        cases.len() > 20_000,
+        "constraint oracle unexpectedly incomplete"
+    );
+    for case in cases {
+        let constraint = case["constraint"].as_str().unwrap();
+        let version = case["version"].as_str().unwrap();
+        let actual = zoli_intel::pypi::matches(constraint, version);
+        if actual.is_err() != case["error"].as_bool().unwrap()
+            || actual
+                .as_ref()
+                .is_ok_and(|value| *value != case["match"].as_bool().unwrap())
+        {
+            failures += 1;
+            if seen.insert(constraint.to_owned()) {
+                differences.push(format!("{constraint:?} {version:?}: {actual:?}; {case}"));
+            }
+        }
+    }
+    assert!(
+        differences.is_empty(),
+        "{} differences:\n{}",
+        failures,
+        differences
+            .iter()
+            .take(30)
+            .cloned()
+            .collect::<Vec<_>>()
+            .join("\n")
+    );
+}
+
+#[test]
 fn signed_snapshots_and_deltas_match_go() {
     use base64::{Engine, engine::general_purpose::STANDARD};
     struct Memory(std::collections::BTreeMap<String, Vec<u8>>);

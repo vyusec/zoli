@@ -66,7 +66,10 @@ func generate(dir string) error {
 	if err := npmMatrix(dir); err != nil {
 		return err
 	}
-	return pypiMatrix(dir)
+	if err := pypiMatrix(dir); err != nil {
+		return err
+	}
+	return pypiSeeded(dir)
 }
 
 func writeJSON(dir, name string, value any) error {
@@ -423,6 +426,32 @@ func queriesFixture(dir string) error {
 			a.Versions = nil
 		}
 		if err := add("pypi-"+state, q, m, []model.Record{r}); err != nil {
+			return err
+		}
+	}
+	for _, test := range []struct{ name, constraint, version string }{
+		{"constraint-range", ">=1.0,<2", "1.2"},
+		{"constraint-upper", ">=1.0,<2", "2"},
+		{"constraint-exclusion", ">=1.0,<2,!=1.5", "1.5"},
+		{"constraint-wildcard", "==1.0.*", "1.0.7"},
+		{"constraint-compatible", "~=1.0.1", "1.1"},
+		{"constraint-prerelease", ">=1.0rc1,<2", "1.1a1"},
+		{"constraint-prerelease-excluded", ">1.0rc1,<2", "1.1a1"},
+		{"constraint-epoch", ">=1!1.0,<2!0", "1!2.0"},
+		{"constraint-local-point", "==1.0+abc", "1.0+abc"},
+		{"constraint-local-vector", ">=1.0,<2", "1.0+abc"},
+		{"constraint-invalid", "===1.0", "1.0"},
+		{"constraint-invalid-version", ">=1", "bad"},
+		{"constraint-missing-version", ">=1", ""},
+		{"constraint-point-intersection", ">1,<=1", "1"},
+		{"constraint-noncomma", ">=1<2", "1.5"},
+	} {
+		r := record()
+		r.Affected[0].Package = model.Identity{Ecosystem: "PyPI", Name: "some-package", Registry: "https://pypi.org"}
+		r.Affected[0].Versions = nil
+		r.Affected[0].Ranges = []model.Range{{Type: "constraint", Constraint: test.constraint}}
+		q := model.Identity{Ecosystem: "PyPI", Name: "some-package", Registry: "https://pypi.org", Version: test.version}
+		if err := add("pypi-"+test.name, q, manifest(), []model.Record{r}); err != nil {
 			return err
 		}
 	}

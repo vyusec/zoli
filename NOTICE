@@ -1,7 +1,7 @@
 Zoli
 Copyright 2026 Zoli contributors
 
-crates/zoli-intel/src/npm.rs and pypi.rs adapt npm and concrete PyPI semantics in
+crates/zoli-intel/src/npm.rs, pypi.rs and pypi/constraints.rs adapt npm and PyPI semantics in
 deps.dev/util/semver (Copyright 2023 Google LLC), distributed under Apache-2.0.
 The Go oracle's exact source inventory is testdata/conformance/PROVENANCE.json.
 

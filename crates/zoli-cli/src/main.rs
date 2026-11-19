@@ -22,7 +22,9 @@ use zoli_policy::{
     assessment::{Decision, Evidence, Suspicious, decide},
 };
 use zoli_proxy::registry::{NpmConfig, RegistryClient, validate_integrity, verify_integrity};
+mod ad_hoc;
 mod config;
+mod doctor;
 mod guard;
 mod output;
 mod worker;
@@ -186,7 +188,7 @@ fn unimplemented(command: &str) -> u8 {
     );
     3
 }
-fn quality(manifest: &Manifest, now: &GoTime) -> Result<QueryResponse> {
+pub(crate) fn quality(manifest: &Manifest, now: &GoTime) -> Result<QueryResponse> {
     zoli_intel::query::query(
         Identity {
             ecosystem: "npm".into(),
@@ -249,6 +251,7 @@ struct NodeAssessment {
     decision: Decision,
     error: Option<String>,
     published_at: Option<GoTime>,
+    age_evidence: Option<String>,
     registry_integrity: Option<String>,
 }
 #[derive(Serialize)]
@@ -269,24 +272,141 @@ struct TreeAssessment {
     limitations: Vec<&'static str>,
 }
 
+fn shell(shell: ShellArg) -> zoli_shell::Shell {
+    match shell {
+        ShellArg::Bash => zoli_shell::Shell::Bash,
+        ShellArg::Zsh => zoli_shell::Shell::Zsh,
+        ShellArg::Fish => zoli_shell::Shell::Fish,
+    }
+}
+
+fn shims(cli: &Cli, action: &ShimsAction) -> Result<u8> {
+    let zoli_home = config::Config::home()?;
+    let (install, args) = match action {
+        ShimsAction::Install(args) => (true, args),
+        ShimsAction::Uninstall(args) => (false, args),
+    };
+    if cli.ci {
+        if install {
+            let report = zoli_shell::install_ci(&zoli_home)?;
+            let appended = match std::env::var_os("GITHUB_PATH") {
+                Some(path) => {
+                    zoli_shell::append_path_file(std::path::Path::new(&path), &report.directory)?
+                }
+                None => false,
+            };
+            if cli.json {
+                let value = serde_json::json!({"schema":1,"scope":"shims_install","time":GoTime::now(),"mode":"ci","changed":report.changed,"directory":report.directory,"shims":report.shims,"github_path_appended":appended});
+                print_json(&value)?;
+            } else {
+                println!(
+                    "zoli shims: {} CI PATH directory {}",
+                    if report.changed { "wrote" } else { "verified" },
+                    report.directory.display()
+                );
+                for shim in &report.shims {
+                    println!("  {}", shim.display());
+                }
+                println!(
+                    "Prepend this directory to PATH; scripts, Makefiles and CI steps will use it."
+                );
+                if appended {
+                    println!("Appended the directory to $GITHUB_PATH.");
+                }
+            }
+        } else {
+            let changed = zoli_shell::uninstall_ci(&zoli_home)?;
+            let directory = zoli_shell::ci_directory(&zoli_home);
+            if cli.json {
+                let value = serde_json::json!({"schema":1,"scope":"shims_uninstall","time":GoTime::now(),"mode":"ci","changed":changed,"directory":directory});
+                print_json(&value)?;
+            } else {
+                println!(
+                    "zoli shims: {} CI PATH shims in {}",
+                    if changed { "removed" } else { "found none in" },
+                    directory.display()
+                );
+            }
+        }
+        return Ok(0);
+    }
+    let shell = shell(
+        args.shell
+            .context("--shell is required unless --ci is used")?,
+    );
+    let home = std::env::var_os("HOME")
+        .map(PathBuf::from)
+        .context("HOME is required for interactive shims")?;
+    if install {
+        let report = zoli_shell::install(shell, &home, &zoli_home)?;
+        if cli.json {
+            let value = serde_json::json!({"schema":1,"scope":"shims_install","time":GoTime::now(),"mode":"shell","shell":shell.name(),"changed":report.changed,"generated":report.generated,"rc":report.rc,"backup":report.backup});
+            print_json(&value)?;
+        } else {
+            println!(
+                "zoli shims: {} {} functions in {}",
+                if report.changed {
+                    "installed"
+                } else {
+                    "verified"
+                },
+                shell.name(),
+                report.rc.display()
+            );
+            println!("  snippet: {}", report.generated.display());
+            if let Some(backup) = &report.backup {
+                println!("  backup:  {}", backup.display());
+            }
+            println!("Open a new shell or source the rc file to activate them.");
+        }
+    } else {
+        let backup = zoli_shell::uninstall(shell, &home, &zoli_home)?;
+        if cli.json {
+            let value = serde_json::json!({"schema":1,"scope":"shims_uninstall","time":GoTime::now(),"mode":"shell","shell":shell.name(),"changed":backup.is_some(),"backup":backup});
+            print_json(&value)?;
+        } else {
+            println!(
+                "zoli shims: {} {} functions from {}",
+                if backup.is_some() {
+                    "removed"
+                } else {
+                    "found none in"
+                },
+                shell.name(),
+                home.join(shell.rc_file()).display()
+            );
+            if let Some(backup) = backup {
+                println!("  backup: {}", backup.display());
+            }
+        }
+    }
+    Ok(0)
+}
+
+fn print_json(value: &serde_json::Value) -> Result<()> {
+    let mut out = std::io::stdout().lock();
+    serde_json::to_writer(&mut out, value)?;
+    out.write_all(b"\n")?;
+    Ok(())
+}
+
 fn run(cli: &Cli) -> Result<u8> {
     match &cli.command {
         Command::Wrap { pm, args } => {
-            if PackageManager::from_program(pm).is_none() {
+            let Some(manager) = PackageManager::from_program(pm) else {
                 return Err(Usage("unsupported package manager".into()).into());
+            };
+            match manager {
+                PackageManager::Npm => guard::run_npm(cli, args),
+                PackageManager::Npx => guard::run_npx(cli, args),
+                _ => Ok(unimplemented(
+                    "wrap: only npm and npx have guarded adapters in this build",
+                )),
             }
-            if pm != "npm" || args.first().is_none_or(|s| s != "ci") {
-                return Ok(unimplemented("wrap: only locked npm ci is supported"));
-            }
-            guard::run(cli, args)
         }
         Command::Serve => Ok(unimplemented("serve")),
-        Command::Shims { action } => {
-            let (ShimsAction::Install(a) | ShimsAction::Uninstall(a)) = action;
-            let _ = a.shell;
-            Ok(unimplemented("shims"))
-        }
-        Command::Doctor => Ok(unimplemented("doctor")),
+        Command::Shims { action } => shims(cli, action),
+        Command::Doctor => doctor::run(cli),
         Command::Worker {
             archive,
             identity,
@@ -442,7 +562,7 @@ fn run(cli: &Cli) -> Result<u8> {
     }
 }
 fn scan(cli: &Cli, lockfile: &std::path::Path, npmrc: Option<&std::path::Path>) -> Result<u8> {
-    let report = assess(cli, lockfile, npmrc, None, None)?;
+    let report = assess(cli, lockfile, npmrc, None, None, "dependency_tree")?;
     output::emit(&report, cli.json, &config::Config::home()?)?;
     Ok(report.decision.exit_code)
 }
@@ -452,6 +572,7 @@ fn assess(
     npmrc: Option<&std::path::Path>,
     quarantine: Option<&std::path::Path>,
     min_age: Option<u64>,
+    scope: &'static str,
 ) -> Result<TreeAssessment> {
     let started = Instant::now();
     let mut timings = BTreeMap::new();
@@ -683,8 +804,25 @@ fn assess(
                 reason: "bundled_artifact_not_accounted_for".into(),
             });
         }
+        let (published_at, age_evidence) = if min_age.is_some() {
+            if package.bundled {
+                parent_publication(&package.path, &published)
+                    .map_or((None, None), |(parent, stamp)| {
+                        (Some(stamp), Some(format!("bundling_parent:{parent}")))
+                    })
+            } else {
+                published
+                    .get(&package.path)
+                    .cloned()
+                    .map_or((None, None), |stamp| {
+                        (Some(stamp), Some("registry_publication".into()))
+                    })
+            }
+        } else {
+            (None, None)
+        };
         if let Some(hours) = min_age {
-            guard::apply_age(&mut decision, published.get(&package.path), hours, &now);
+            guard::apply_age(&mut decision, published_at.as_ref(), hours, &now);
         }
         nodes.push(NodeAssessment {
             package: package.clone(),
@@ -693,7 +831,8 @@ fn assess(
             analysis_container: container,
             decision,
             error,
-            published_at: published.get(&package.path).cloned(),
+            published_at,
+            age_evidence,
             registry_integrity: registry_integrity.get(&package.path).cloned(),
         });
     }
@@ -715,11 +854,7 @@ fn assess(
     timings.insert("total".into(), started.elapsed().as_millis());
     Ok(TreeAssessment {
         schema: 1,
-        scope: if min_age.is_some() {
-            "npm_ci_assessment"
-        } else {
-            "dependency_tree"
-        },
+        scope,
         time: now,
         mode: mode(cli),
         suspicious_policy: suspicious(cli, config.policy.suspicious),
@@ -739,6 +874,17 @@ fn assess(
         ],
     })
 }
+fn parent_publication(
+    path: &str,
+    published: &BTreeMap<String, GoTime>,
+) -> Option<(String, GoTime)> {
+    published
+        .iter()
+        .filter(|(parent, _)| path.starts_with(&format!("{parent}/node_modules/")))
+        .max_by_key(|(parent, _)| parent.len())
+        .map(|(parent, stamp)| (parent.clone(), stamp.clone()))
+}
+
 fn aggregate(base: Decision, nodes: &[NodeAssessment]) -> Decision {
     let mut reasons: BTreeSet<String> = base.reasons.iter().cloned().collect();
     let mut complete = base.complete;

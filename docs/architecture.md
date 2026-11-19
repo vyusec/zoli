@@ -1,31 +1,36 @@
 # Architecture
 
-Updated: 30 October 2026 (Asia/Kolkata). Phase 1 assessment and the locked npm ci guard are implemented and validated locally. The broader proxy flow below remains a Phase 2 target. [Progress](progress.md) distinguishes the gates.
+Updated: 20 November 2026 (Asia/Kolkata). Phase 1 assessment and Phase 2's supported npm guard are implemented and validated locally. The supported guard uses an approved-cache design; the proxy flow remains deferred.
 
 ## Implemented locked install flow
 
-`wrap npm -- ci` captures project/config inputs, assesses all recorded dependencies against the verified feed, checks full registry publication metadata and the 24-hour age floor, verifies archive integrity and performs static inspection. Approved archives populate a private cache through `npm cache add --offline --ignore-scripts` outside the project. A second verified-feed/policy pass and unchanged-input check precede durable authorization and `npm ci --offline`. User caches and operational npm configuration cannot supply artifacts. No listener or local CA is needed for this path. See [configuration](configuration.md#guarded-npm-ci) for its explicit limits.
+`wrap npm -- ci` captures project/config inputs, assesses all recorded dependencies against the verified feed, checks full registry publication metadata and the 24-hour age floor, verifies archive integrity and performs static inspection. Approved archives populate a private cache through `npm cache add --offline --ignore-scripts` outside the project. A second verified-feed/policy pass and unchanged-input check precede durable authorization and `npm ci --offline`. User caches and operational npm configuration cannot supply artifacts. No listener or local CA is needed for this path. See [configuration](configuration.md#guarded-npm-installation) for its explicit limits.
 
-## Planned broader install flow
+## Implemented ad-hoc install flow
 
 ```text
 developer / CI / agent
-   │  npm install foo
+   │  npm install foo@1.2.3     or     npx tool@1.0.0
    ▼
 shim (shell function or PATH shim)
-   │  zoli wrap npm -- install foo
+   │  zoli wrap npm -- install foo@1.2.3   /   zoli wrap npx -- tool@1.0.0
    ▼
-zoli wrap ── pre-flight: exact versions in the direct arguments ──► policy ──► block early
-   │  spawn real npm with HTTPS_PROXY + NODE_EXTRA_CA_CERTS
-   ▼
-npm ── CONNECT registry.npmjs.org ──► zoli serve (127.0.0.1)
-                                        │ TLS with local-CA leaf certificate
-                                        ├─ packument: drop blocked / too-new versions, fix dist-tags
-                                        └─ tarball:   evaluate name@version, 403 on block
-npm ── CONNECT anything-else ─────────► zoli serve ── tunnel untouched ──► upstream
+zoli wrap ── validate registry routes and temporary manifest
+   │
+   ├─ npm install --package-lock-only --ignore-scripts (metadata only, temp dir)
+   │
+   ├─ assess exact resolved tree (feed, freshness, 24h age, SRI, static inspection)
+   │
+   ├─ seed invocation-private cache with approved archives only
+   │
+   └─ npm install --offline   or   npm ci --offline + execute only the declared bin
 ```
 
-Verdicts come only from the verified local feed cache (ADR-003). `zoli update` refreshes that cache through the trust chain described in ADR-004. Every decision is appended to the audit log.
+Resolution metadata and approved artifacts use separate temporary caches. Project manifests/locks are written only after complete approval; npx runs from a temporary installation. Bundled dependencies inherit the containing archive's publication age and integrity. Verdicts come only from the verified local feed cache (ADR-003); `zoli update` refreshes it through ADR-004's trust chain. Every decision is appended to the audit log.
+
+## Deferred proxy flow
+
+The earlier TLS-interception proposal is not implemented. It is not required by the supported npm entry points because npm never receives unapproved bytes. A future proxy for other managers would need the local CA, name constraints and CONNECT/packument handling described in ADR-002/ADR-005, plus its own bypass tests. Until then `zoli serve` exits 3 and changes nothing.
 
 ## Verdicts versus decisions
 
@@ -62,7 +67,7 @@ supported npm lockfile ──► dependency graph with exact identities and pare
 
 Publication/source freshness is checked before downloads and again after expensive analysis. Decisions prioritize runtime errors over policy blocks over incomplete work. Reports retain manifest/key provenance, artifact/rule digests, findings, graph paths, gaps and timings. The CLI durably appends the audit record before releasing the report.
 
-The locked guard now uses this assessment before npm starts. Known blocked or too-young packages can be rejected before artifact download. Unsupported sources refuse installation; only approved quarantine bytes enter the private npm cache. Wider proxy-based resolution remains planned.
+The guarded paths use this assessment before npm starts. Known blocked or too-young packages can be rejected before artifact download. Unsupported sources refuse installation; only approved quarantine bytes enter the private npm cache. Locked `ci`, ad-hoc `install`, `npx`, shims and `doctor` are implemented; pnpm/yarn/bun and `serve` remain unsupported.
 
 ## Crates
 
@@ -70,10 +75,10 @@ The locked guard now uses this assessment before npm starts. Known blocked or to
 | --- | --- | --- | --- |
 | `zoli-intel` | — | Envelope and artifact verification, delta application, fixed-wire serializer, records hash, cache, query and matching | Phase 1 |
 | `zoli-policy` | `zoli-intel`, `zoli-inspect` | Immutable-evidence decisions, one-hour freshness bound, suspicious/CI and completeness rules | Phase 1; guard adds the configured publish-age floor |
-| `zoli-proxy` | `zoli-intel` | Approved registry acquisition, scoped credentials, redirects, integrity | Phase 1; interception listener/CA/metadata rewriting remain Phase 2 |
-| `zoli-pms` | `zoli-intel` | Package-manager identification and exact npm lockfile inventory | Phase 1; wrapping/Python adapters later |
+| `zoli-proxy` | `zoli-intel` | Approved registry acquisition, scoped credentials, redirects, integrity | Phase 1; interception listener/CA remain deferred |
+| `zoli-pms` | `zoli-intel` | Package-manager identification and exact npm lockfile inventory | Phase 1; Python adapters later |
 | `zoli-inspect` | `zoli-intel` | Bounded archives, Oxc AST, versioned local evidence and coverage; no sockets or package execution | Phase 1 |
-| `zoli-shell` | `zoli-pms` | rc-file blocks for bash, zsh and fish; PATH shim directory; uninstall | Phase 2, Phase 4 (CI) |
+| `zoli-shell` | `zoli-pms` | rc-file blocks for bash, zsh and fish; PATH shim directory; uninstall | Phase 2 (shell), Phase 4 (CI) |
 | `zoli-cli` | all | The `zoli` binary | Phase 0 (surface) |
 
 Dependencies point one way, with `zoli-intel` at the bottom. Network access exists only in `zoli-intel` (feed) and `zoli-proxy` (registries); no other crate opens sockets.
@@ -84,13 +89,14 @@ The user selected [Ratatui](https://ratatui.rs/) for Zoli's TUI on 30 October 20
 
 ## Python adapter foundation
 
-[Phase 3](phase3-python.md) now exposes PyPI feed-only checks with concrete Go-compatible comparison, exact/event-range matching and optional artifact SHA-256 selectors. Constraint-string ranges refuse until parity is implemented. A separate `zoli-pms::requirements` reader inventories a strict hash-pinned pip subset without executing Python, following includes or resolving dependencies. Python artifact inspection and installer execution retain their own acceptance gates.
+[Phase 3](phase3-python.md) now exposes PyPI feed-only checks with concrete Go-compatible comparison, exact/event/constraint matching and optional artifact SHA-256 selectors. Version parsing and interval construction are separate modules; bounded work refuses before a partial verdict can be released. Go feed semantics are kept separate from pip input grammar. A separate `zoli-pms::requirements` reader inventories a strict hash-pinned pip subset without executing Python, following includes or resolving dependencies. Its `complete_pins()` accessor refuses any input gap; this is file completeness, not a transitive dependency or installation approval. Python artifact inspection and installer execution retain their own acceptance gates.
 
 ## Commands
 
 | Command | Purpose | Phase |
 | --- | --- | --- |
-| `zoli wrap npm -- ci` | Complete assessment, private cache, release recheck, then npm offline; other commands refuse | 2, implemented |
+| `zoli wrap npm -- ci\|install [spec…]` | Complete assessment, approved inputs/private cache, release recheck, then npm offline; `npx` runs the declared executable | 2, implemented |
+| `zoli wrap npx -- <spec> [args]` | Resolve/assess/install offline, then execute only the declared package executable | 2, implemented |
 | `zoli serve` | Registry-scoped interception proxy | 2 |
 | `zoli check --eco npm\|PyPI --name X --ver Y [--sha256 HASH]` | One verdict and decision from the verified cache | 1 |
 | `zoli update` | Fetch, verify and atomically store the latest publication | 1 |
@@ -98,7 +104,7 @@ The user selected [Ratatui](https://ratatui.rs/) for Zoli's TUI on 30 October 20
 | `zoli inspect <archive> --eco npm --name X --ver Y` | Local artifact inspection only, optional `--integrity` | 1 |
 | `zoli scan --lockfile <path> [--npmrc <trusted-file>]` | Aggregate feed, graph, acquisition and local inspection | 1 |
 | `zoli shims install\|uninstall (--shell <sh> \| --ci)` | Install or remove shell shims, or PATH shims for CI | 2 (shell), 4 (CI) |
-| `zoli doctor` | Check that the shim is active, the proxy is reachable, the CA is trusted by the wrapped process, and the feed is fresh | 2 |
+| `zoli doctor` | Check feed, npm 10, permissions, audit, shim/PATH and project prerequisites | 2 |
 
 ## Exit codes
 
@@ -123,12 +129,12 @@ Before installation, any nonzero approval stops npm. Once authorized, the wrappe
 | `cache/feed.json` | Verified snapshot in Go `Snapshot` shape (ADR-004 §7) | 0600 |
 | `state.json` | Highest verified sequence, pinned key ID and raw-manifest digest (ADR-005) | 0600 |
 | `update.lock` | Shared-reader/exclusive-updater filesystem lock | 0600 |
-| `ca/` | Local proxy CA key and certificate (ADR-005) | 0700 / 0600 |
-| `shims/` | Generated shell snippets and the PATH shim directory | 0755 |
+| `ca/` | Reserved for a future proxy CA; not created (ADR-005) | 0700 / 0600 |
+| `shims/` | Generated shell snippets (0600) and PATH shims (0755) | 0700 directories |
 | `log/audit.jsonl` | Append-only decision log | 0600 |
 
 The earlier, unpublished Python prototype also uses `~/.zoli/config.json` and `~/.zoli/audit.jsonl`, with a different schema. v1 marks its configuration with `config_version` and keeps its audit log under `log/`, so neither file is ever misread.
 
 ## Network egress
 
-In Phase 1, only `zoli-intel` connects to the configured public feed on HTTPS port 443, and only `zoli-proxy` connects to approved registry/artifact origins. Redirect targets are independently checked, DNS addresses are pinned, private access is explicit per origin, and credentials are recomputed per hop. No hosted package queries or telemetry are sent. Phase 2's forwarding/tunnelling behavior is not implemented.
+In Phase 1/2, only `zoli-intel` connects to the configured public feed on HTTPS port 443, and only `zoli-proxy` connects to approved registry/artifact origins. npm resolution uses npm itself against the same approved routes, with `--ignore-scripts` and a separate metadata cache; the resulting lockfile is untrusted input to Zoli's own acquisition. Redirect targets are independently checked, DNS addresses are pinned, private access is explicit per origin, and credentials are recomputed per hop. No hosted package queries or telemetry are sent. No interception listener exists.
