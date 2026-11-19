@@ -184,13 +184,21 @@ pub fn publish_adjusted(
         .unwrap();
 }
 pub fn command(home: &Path, args: &[&str]) -> Output {
-    Command::new(env!("CARGO_BIN_EXE_zoli"))
+    let mut command = Command::new(env!("CARGO_BIN_EXE_zoli"));
+    command
         .env_clear()
         .env("HOME", home)
         .env("ZOLI_HOME", home)
-        .args(args)
-        .output()
-        .unwrap()
+        .args(args);
+    // Keep ordinary process facilities available (DNS/TLS helpers and the
+    // platform temporary directory) while still removing user configuration.
+    if let Some(path) = std::env::var_os("PATH") {
+        command.env("PATH", path);
+    }
+    if let Some(tmp) = std::env::var_os("TMPDIR") {
+        command.env("TMPDIR", tmp);
+    }
+    command.output().unwrap()
 }
 pub fn result(output: Output, code: i32) -> Value {
     assert_eq!(
