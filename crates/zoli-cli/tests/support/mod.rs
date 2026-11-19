@@ -189,6 +189,7 @@ pub fn command(home: &Path, args: &[&str]) -> Output {
         .env_clear()
         .env("HOME", home)
         .env("ZOLI_HOME", home)
+        .env("ZOLI_DEBUG_NET", "1")
         .args(args);
     // Keep ordinary process facilities available (DNS/TLS helpers and the
     // platform temporary directory) while still removing user configuration.

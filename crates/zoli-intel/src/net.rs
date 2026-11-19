@@ -146,8 +146,12 @@ impl Http {
             if let Some(auth) = authorization(&url)? {
                 request = request.header(AUTHORIZATION, auth);
             }
-            let response = request.send().map_err(|_| {
-                anyhow::anyhow!("HTTPS request failed; destination and credentials withheld")
+            let response = request.send().map_err(|error| {
+                if std::env::var_os("ZOLI_DEBUG_NET").is_some() {
+                    anyhow::anyhow!("HTTPS request failed: {error}")
+                } else {
+                    anyhow::anyhow!("HTTPS request failed; destination and credentials withheld")
+                }
             })?;
             if response.status().is_redirection() {
                 ensure!(hop < 3, "too many download redirects");
