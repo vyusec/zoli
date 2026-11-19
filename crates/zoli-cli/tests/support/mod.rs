@@ -283,7 +283,11 @@ impl Server {
                 while header.len() < 16_384 && !header.ends_with(b"\r\n\r\n") {
                     match stream.read(&mut byte) {
                         Ok(1) => header.push(byte[0]),
-                        _ => break,
+                        Ok(_) => break,
+                        Err(error) => {
+                            eprintln!("zoli test server read error: {error}");
+                            break;
+                        }
                     }
                 }
                 if !header.ends_with(b"\r\n\r\n") {
