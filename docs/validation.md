@@ -15,6 +15,7 @@ Phase 2's supported npm guard was completed and validated locally on Linux x86_6
 | Shell and doctor | **7 `zoli-shell` unit tests and 5 process tests passed**: idempotent bash install, backups, marker safety, fish conf.d, CI shims, `$GITHUB_PATH`, healthy/stale/missing-config doctor behavior |
 | CLI surface | **6 passed**: unsupported managers still exit 3 without starting them; an unconfigured guarded npm install exits before npm starts |
 | `make npm-guard-container` | **19 passed** (10 guard + 9 ad-hoc/npx) as uid 65534, no external network, read-only root, dropped capabilities, no-new-privileges, bounded memory/pids and a private writable tmpfs |
+| Hosted CI | **Green** for `00eb581` ([run](https://github.com/vyusec/zoli/actions/runs/44621477457)): rustfmt/Clippy, cargo-deny, Ubuntu tests plus the Docker gate, and macOS tests all passed |
 
 ### Implemented behavior
 
@@ -27,7 +28,7 @@ Phase 2's supported npm guard was completed and validated locally on Linux x86_6
 
 ### Limits of this evidence
 
-No healthy deployed feed was available: the configured quick-tunnel hostname did not resolve on 20 November. The live Rust/Go/hosted comparison and healthy-source acceptance therefore remain open. Hosted CI was not observed before this entry and is not claimed. This pass did not test macOS, `serve`, pnpm/yarn/bun, workspaces, source distributions, representative real-world projects, runtime sandboxing or nested installer protection. Static fixture success is not malware-detection accuracy evidence.
+No healthy deployed feed was available: the configured quick-tunnel hostname did not resolve on 20 November. The live Rust/Go/hosted comparison and healthy-source acceptance therefore remain open. Hosted Linux/macOS CI was observed green for the implementation; macOS coverage is test-process coverage, not release packaging. This pass did not test `serve`, pnpm/yarn/bun, workspaces, source distributions, representative real-world projects, runtime sandboxing or nested installer protection. Static fixture success is not malware-detection accuracy evidence.
 
 ## Expanded Python testing — 30 October 2026
 

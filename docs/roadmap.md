@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated: 20 November 2026 (Asia/Kolkata). [Progress](progress.md) records capability status; [validation](validation.md) records executed checks. Phase 2's supported npm guard is now implemented and locally validated, including locked `ci`, ad-hoc `install`, `npx`, shell/PATH shims and `doctor`. Healthy deployed-feed acceptance and hosted CI remain open operational gates; `serve` and non-npm managers remain explicitly unsupported.
+Updated: 20 November 2026 (Asia/Kolkata). [Progress](progress.md) records capability status; [validation](validation.md) records executed checks. Phase 2's supported npm guard is now implemented and locally validated, including locked `ci`, ad-hoc `install`, `npx`, shell/PATH shims and `doctor`. Healthy deployed-feed acceptance remains an operational gate; hosted Linux/macOS CI passed for the implementation ([run](https://github.com/vyusec/zoli/actions/runs/44621477457)). `serve` and non-npm managers remain explicitly unsupported.
 
 ## Locked decisions
 
@@ -24,7 +24,7 @@ The user authorized beginning [Phase 3](phase3-python.md) on 30 October after th
 | --- | --- | --- | --- |
 | 0 — Baseline | Workspace, ADRs, pinned toolchain, CI, docs | Dated baseline; build and CI green | Complete since 16 October; local revalidation passed before Phase 1; original [hosted run](https://github.com/vyusec/zoli/actions/runs/38869463032) |
 | 1 — Decision core and package assessment | Verified feed, npm inventory/acquisition, local inspection, policy, audit and CLI | Local conformance, trust/recovery, inventory, artifact and aggregate gates; shared deployed feed comparison | Implementation/local checks complete. Live gate explicitly deferred; no new hosted run claimed |
-| 2 — npm guard | Guarded `npm ci`, `npm install`, `npx`, quarantine until decision, 24-hour minimum age, block UX, shell/PATH shims and `doctor` | Real npm direct/transitive, lockfile, ad-hoc and npx tests plus the warm-cache Docker gate; unapproved bytes never released; normal output preserved | **Complete locally for npm (20 November 2026).** `serve`, non-npm managers and healthy deployed-feed operation remain outside this local gate |
+| 2 — npm guard | Guarded `npm ci`, `npm install`, `npx`, quarantine until decision, 24-hour minimum age, block UX, shell/PATH shims and `doctor` | Real npm direct/transitive, lockfile, ad-hoc and npx tests plus the warm-cache Docker gate; unapproved bytes never released; normal output preserved | **Complete for npm (20 November 2026).** Hosted Linux/macOS CI green; `serve`, non-npm managers and healthy deployed-feed operation remain outside this gate |
 | 3 — Python guard | pip/uv/poetry/pipx adapters and PEP 440 parity | Real pip and relisted-package gate | Matching/input milestone (20% checklist): Go-compatible comparison/constraints, exact/event checks and hardened pinned-input reader; Python installation remains gated |
 | 4 — Install/CI | Checksum-pinned installer, CI PATH shims, release matrix and uninstall | Static Linux musl, x86_64/arm64 macOS releases and recipe gates | Not started |
 | 5 — Hardening | Rotation/recovery and extended resource/freshness abuse checks | Trust regression suite and failure-path evidence | Not started; Phase 1 already enforces initial freshness, storage and resource bounds |

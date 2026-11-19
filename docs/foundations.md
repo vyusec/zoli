@@ -1,6 +1,6 @@
 # Phase 1 and Phase 2 foundation gates
 
-Updated 20 November 2026 (Asia/Kolkata). Phase 2's supported npm guard is implemented and locally validated, including locked `ci`, ad-hoc `install`, `npx`, shims and `doctor`. Other managers, `serve`, healthy deployed publication and hosted CI retain separate gates.
+Updated 20 November 2026 (Asia/Kolkata). Phase 2's supported npm guard is implemented and locally validated, including locked `ci`, ad-hoc `install`, `npx`, shims and `doctor`. Other managers and `serve` remain unsupported; healthy deployed publication remains an operational gate. Hosted Linux/macOS CI passed for commit `00eb581` ([run](https://github.com/vyusec/zoli/actions/runs/44621477457)).
 
 | Foundation | Evidence now | Remaining acceptance |
 | --- | --- | --- |
@@ -8,7 +8,7 @@ Updated 20 November 2026 (Asia/Kolkata). Phase 2's supported npm guard is implem
 | Honest freshness | Common-clock Go/Rust query fixtures; missing sources and future timestamps over five minutes degrade; final-clock policy recheck | Observe healthy configured sources on the homelab |
 | Complete assessment scope | Typed declarations; unsupported workspaces stay incomplete; bounded integrity-checked inspection | Representative real-project corpus; each new source format needs its own gate |
 | Feed static lifecycle | Nine PostgreSQL integration tests in sibling intel-feed, including discovery → worker → review → signed publication → withdrawal, stale leases, rollback, budgets/retries/skips | Deployment and observed real discovery/review cycles |
-| Locked npm enforcement | `wrap npm -- ci`: full recorded inventory, 24-hour age floor, metadata/lock/archive integrity binding, private approved cache, final input/feed recheck and durable audit; ten real npm integration tests | Hosted Linux/macOS CI and healthy deployed-feed operation |
+| Locked npm enforcement | `wrap npm -- ci`: full recorded inventory, 24-hour age floor, metadata/lock/archive integrity binding, private approved cache, final input/feed recheck and durable audit; ten real npm integration tests | Healthy deployed-feed operation |
 | Broader npm entry points | `wrap npm -- install` resolves with metadata only, assesses the exact tree, writes only approved inputs and installs offline; `wrap npx` runs only the declared executable; nine ad-hoc/npx tests; bash/zsh/fish and CI PATH shims; `doctor` | Non-npm managers, `serve`, and representative real-project coverage |
 | Reproducibility | `make ci`, `make cache-conformance`, `make npm-guard-container` (19 guard/ad-hoc tests) | Release matrix remains Phase 4 |
 

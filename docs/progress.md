@@ -1,12 +1,12 @@
 # Progress
 
-Updated: 20 November 2026 (Asia/Kolkata). **Phase 0 is complete. Phase 1 implementation and local validation are complete; healthy live-feed acceptance remains pending. Phase 2 (npm guard) is implemented and locally validated for `ci`, `install`, `npx`, shims and `doctor`.** Phase 3 remains at its first matching/input milestone.
+Updated: 20 November 2026 (Asia/Kolkata). **Phase 0 is complete. Phase 1 implementation and local validation are complete; healthy live-feed acceptance remains pending. Phase 2 (npm guard) is implemented and validated locally and on hosted Linux/macOS CI for `ci`, `install`, `npx`, shims and `doctor`.** Phase 3 remains at its first matching/input milestone.
 
 ## Phase 2 completion — 20 November 2026
 
 Supported npm entry points now share one approval model. Locked `npm ci` retains its ten real-npm regressions. Ad-hoc `npm install` resolves metadata only in a temporary project, assesses the exact resolved tree, writes approved inputs, and installs offline from the private cache; `npm install pkg@version`, ranges/tags and `--save-dev`/`--save-exact` are covered. `npx` resolves, assesses, installs offline and executes only the selected package's declared executable. Bundled dependencies inherit the containing archive's publication time and integrity. Interactive bash/zsh/fish shims, CI PATH shims and `doctor` are implemented; `serve` and non-npm managers still refuse.
 
-Local evidence: `make ci` passes; **172 tests pass, 0 fail, 1 manual timing test ignored**; `make npm-guard-container` passes **19 tests** (10 locked/ad-hoc guard, 9 ad-hoc/npx) as uid 65534 with no external network or host mounts. No healthy live feed was available (the configured tunnel did not resolve), so deployed-feed acceptance and hosted CI remain open. Details are in [validation](validation.md#phase-2-completion--20-november-2026).
+Local evidence: `make ci` passes; **172 tests pass, 0 fail, 1 manual timing test ignored**; `make npm-guard-container` passes **19 tests** (10 locked/ad-hoc guard, 9 ad-hoc/npx) as uid 65534 with no external network or host mounts. No healthy live feed was available (the configured tunnel did not resolve), so deployed-feed acceptance remains open. Hosted Linux/macOS CI passed for `00eb581` ([run](https://github.com/vyusec/zoli/actions/runs/44621477457)). Details are in [validation](validation.md#phase-2-completion--20-november-2026).
 
 ## Earlier status — 30 October 2026
 
@@ -18,7 +18,7 @@ Implemented means code exists. Validated means the linked evidence was actually 
 
 | Capability | Implementation and local evidence | Remaining gate |
 | --- | --- | --- |
-| Workspace and quality gates | Seven crates, one binary, pinned Rust 1.98.0; `make ci` passes formatting, provenance, Clippy, dependency policy, build and tests (**172 passed, 1 manual timing test ignored**) | Observe hosted Linux/macOS CI for these changes; release/static builds remain Phase 4 |
+| Workspace and quality gates | Seven crates, one binary, pinned Rust 1.98.0; `make ci` passes formatting, provenance, Clippy, dependency policy, build and tests (**172 passed, 1 manual timing test ignored**); hosted Linux/macOS CI green | Release/static builds remain Phase 4 |
 | Go compatibility | Fixed-wire serializers, timestamps, ordered hashes, identity normalization, custom npm semantics and unchanged query results | Finite synthetic corpus is not exhaustive semantic proof |
 | Reference corpus | Nine generated families: 43 strings, 5 records, 15 identities, 66 queries, 47 signed feed/update cases, 2,072 npm constraint checks, 1,369 npm comparisons, 6,084 PyPI comparisons, 29,973 PyPI constraints and 100,000 seeded PyPI cases | Regenerate whenever the inventoried reference source changes; parity is not PEP 440 compliance |
 | Feed trust and storage | Raw-byte Ed25519 verification, compressed size/hash verification, bounded gzip/rows, deltas/fallback; independent durable sequence/digest, atomic replacements and filesystem locks | Public HTTPS transport verified against a degraded feed; healthy-source acceptance remains open. Power-loss behavior is modeled by interrupted state/cache tests |
@@ -61,7 +61,7 @@ A real npm negative control installed a cached transitive package and executed i
 | --- | --- |
 | 0 | Complete since 16 October; original [hosted CI](https://github.com/vyusec/zoli/actions/runs/38869463032), locally revalidated before Phase 1 |
 | 1 | All local implementation milestones complete. ADR-004 gates 1–3 pass against the generated corpus. Gate 4 now has public HTTPS, full cache agreement and one live lookup comparison; healthy-source acceptance and a broader live query set remain pending |
-| 2 | **Complete locally for npm (20 November 2026):** locked `ci`, ad-hoc `install`, `npx`, bundled age evidence, shims and doctor pass local and Docker gates. `serve`, non-npm managers, healthy deployed-feed operation and hosted CI remain open |
+| 2 | **Complete for npm (20 November 2026):** locked `ci`, ad-hoc `install`, `npx`, bundled age evidence, shims and doctor pass local, Docker and hosted Linux/macOS gates. `serve`, non-npm managers and healthy deployed-feed operation remain open |
 | 3 | Matching/input milestone implemented and tested; see the 20% acceptance checklist. Wheel inspection, dependency selection, pip enforcement and other adapters remain open |
 | 4–5 | Release distribution and broader hardening remain planned |
 
@@ -70,6 +70,6 @@ The fixture source is the local intel-feed handoff without Git metadata. [PROVEN
 ## Deferred work
 
 - Repair server ingestion and repeat live Rust/Go/hosted comparisons with healthy sources and a broader query set.
-- Observe hosted CI and a healthy deployed publication before claiming cross-platform or deployed acceptance.
+- Observe a healthy deployed publication before claiming deployed acceptance; hosted Linux/macOS CI is green for the implementation.
 - Add pnpm/yarn/bun and `serve` only after each has equivalent resolution, cache, route and bypass tests; keep unsupported entry points refusing until then.
 - Profile representative real projects before implementing indexes, bounded concurrency or reusable analysis reports.
