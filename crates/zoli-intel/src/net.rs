@@ -148,7 +148,7 @@ impl Http {
             }
             let response = request.send().map_err(|error| {
                 if std::env::var_os("ZOLI_DEBUG_NET").is_some() {
-                    anyhow::anyhow!("HTTPS request failed: {error}")
+                    anyhow::anyhow!("HTTPS request failed: {error:#}")
                 } else {
                     anyhow::anyhow!("HTTPS request failed; destination and credentials withheld")
                 }
